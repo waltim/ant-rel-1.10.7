@@ -1171,12 +1171,7 @@ public class JUnitTestRunner implements TestListener, JUnitTaskMirror.JUnitTestR
     }
 
     private static boolean filterLine(final String line) {
-        for (String filter : DEFAULT_TRACE_FILTERS) {
-            if (line.contains(filter)) {
-                return true;
-            }
-        }
-        return false;
+        return DEFAULT_TRACE_FILTERS.stream().anyMatch(filter -> line.contains(filter));
     }
 
     /**

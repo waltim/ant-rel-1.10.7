@@ -53,14 +53,7 @@ public class RpmTest {
     public static class MyRpm extends Rpm {
         protected Execute getExecute(Commandline toExecute,
                                      ExecuteStreamHandler streamhandler) {
-            return new Execute() {
-                    public int execute() {
-                        // 2 is != 0 and even, so it is considered
-                        // failure on any platform currently supported
-                        // by Execute#isFailure.
-                        return 2;
-                    }
-                };
+            return ()-> { return 2;};
         }
 
         public void log(String msg, int msgLevel) {

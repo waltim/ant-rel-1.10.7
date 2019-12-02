@@ -438,12 +438,7 @@ public class MailMessage {
 
     boolean isResponseOK(String response, int[] ok) {
         // Check that the response is one of the valid codes
-        for (int status : ok) {
-            if (response.startsWith("" + status)) {
-                return true;
-            }
-        }
-        return false;
+        return ok.stream().anyMatch(status -> response.startsWith("" + status));
     }
 
     void disconnect() throws IOException {

@@ -337,11 +337,7 @@ public class JavaTest {
     public void testReleasedInput() throws Exception {
         PipedOutputStream out = new PipedOutputStream();
         final PipedInputStream in = new PipedInputStream(out);
-        buildRule.getProject().setInputHandler(new DefaultInputHandler() {
-            protected InputStream getInputStream() {
-                return in;
-            }
-        });
+        buildRule.getProject().setInputHandler(()-> { return in;});
         buildRule.getProject().setDefaultInputStream(in);
 
         Java java = new Java();
@@ -383,11 +379,7 @@ public class JavaTest {
     public void testFlushedInput() throws Exception {
         final PipedOutputStream out = new PipedOutputStream();
         final PipedInputStream in = new PipedInputStream(out);
-        buildRule.getProject().setInputHandler(new DefaultInputHandler() {
-            protected InputStream getInputStream() {
-                return in;
-            }
-        });
+        buildRule.getProject().setInputHandler(()-> { return in;});
         buildRule.getProject().setDefaultInputStream(in);
 
         final boolean[] timeout = new boolean[1];
