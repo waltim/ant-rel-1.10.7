@@ -38,7 +38,7 @@ import org.apache.tools.ant.types.resources.MappedResource;
 import org.apache.tools.ant.types.resources.PropertyResource;
 import org.apache.tools.ant.util.FileNameMapper;
 import org.apache.tools.ant.util.regexp.RegexpMatcher;
-import org.apache.tools.ant.util.regexp.RegexpMatcherFactory;
+import org.apache.tools.ant.util.regexp.RegexpMatcherFactory;import java.util.stream.Collectors;
 
 /**
  * A set of properties.
@@ -384,12 +384,7 @@ public class PropertySet extends DataType implements ResourceCollection {
                     names.add(r.name);
                 }
             } else if (r.prefix != null) {
-                for (String name : props.keySet()) {
-                    if (name.startsWith(r.prefix)) {
-                        names.add(name);
-                    }
-                }
-            } else if (r.regex != null) {
+                names  = props.keySet().stream().filter(name -> name.startsWith(r.prefix)).collect(Collectors.toList());} else if (r.regex != null) {
                 RegexpMatcherFactory matchMaker = new RegexpMatcherFactory();
                 RegexpMatcher matcher = matchMaker.newRegexpMatcher();
                 matcher.setPattern(r.regex);

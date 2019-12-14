@@ -2341,12 +2341,7 @@ public class Javadoc extends Task {
     }
 
     private boolean containsWhitespace(final String s) {
-        for (char c : s.toCharArray()) {
-            if (Character.isWhitespace(c)) {
-                return true;
-            }
-        }
-        return false;
+        return s.toCharArray().stream().anyMatch(c -> Character.isWhitespace(c));
     }
 
     private String quoteString(final String str, final char delim) {

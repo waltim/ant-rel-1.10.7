@@ -165,21 +165,11 @@ public class HasMethod extends ProjectComponent implements Condition {
     }
 
     private boolean isFieldFound(Class<?> clazz) {
-        for (Field fieldEntry : clazz.getDeclaredFields()) {
-            if (fieldEntry.getName().equals(field)) {
-                return true;
-            }
-        }
-        return false;
+        return clazz.getDeclaredFields().stream().anyMatch(fieldEntry -> fieldEntry.getName().equals(field));
     }
 
     private boolean isMethodFound(Class<?> clazz) {
-        for (Method methodEntry : clazz.getDeclaredMethods()) {
-            if (methodEntry.getName().equals(method)) {
-                return true;
-            }
-        }
-        return false;
+        return clazz.getDeclaredMethods().stream().anyMatch(methodEntry -> methodEntry.getName().equals(method));
     }
 
 }
