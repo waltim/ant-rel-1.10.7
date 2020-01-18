@@ -232,9 +232,9 @@ public class Ant extends Task {
             addAlmostAll(getProject().getProperties(), PropertyType.PLAIN);
         }
 
-        for (PropertySet ps : propertySets) {
+        propertySets.forEach((ps) -> {
             addAlmostAll(ps.getProperties(), PropertyType.PLAIN);
-        }
+        });
     }
 
     /**
@@ -447,9 +447,9 @@ public class Ant extends Task {
         } finally {
             // help the gc
             newProject = null;
-            for (Property p : properties) {
+            properties.forEach((p) -> {
                 p.setProject(null);
-            }
+            });
 
             if (output != null && out != null) {
                 FileUtils.close(out);
@@ -537,13 +537,12 @@ public class Ant extends Task {
         // subproject, if inheritRefs is true
         if (inheritRefs) {
             Map<String, Object> newReferences = newProject.getReferences();
-            for (String key : thisReferences.keySet()) {
-                if (newReferences.containsKey(key)) {
-                    continue;
-                }
+            thisReferences.keySet().stream().filter((key) -> !(newReferences.containsKey(key))).map((key) -> {
                 copyReference(key, key);
+                return key;
+            }).forEachOrdered((_item) -> {
                 newProject.inheritIDReferences(getProject());
-            }
+            });
         }
     }
 

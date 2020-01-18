@@ -107,7 +107,7 @@ public class Move extends Copy {
     protected void doFileOperations() {
         //Attempt complete directory renames, if any, first.
         if (completeDirMap.size() > 0) {
-            for (Map.Entry<File, File> entry : completeDirMap.entrySet()) {
+            completeDirMap.entrySet().forEach((entry) -> {
                 File fromDir = entry.getKey();
                 File toDir = entry.getValue();
                 boolean renamed = false;
@@ -127,7 +127,7 @@ public class Move extends Copy {
                     DirectoryScanner ds = fs.getDirectoryScanner(getProject());
                     scan(fromDir, toDir, ds.getIncludedFiles(), ds.getIncludedDirectories());
                 }
-            }
+            });
         }
         int moveCount = fileCopyMap.size();
         if (moveCount > 0) {   // files to move

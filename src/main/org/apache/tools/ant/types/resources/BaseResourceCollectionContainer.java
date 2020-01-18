@@ -190,11 +190,9 @@ public abstract class BaseResourceCollectionContainer
         if (isReference()) {
             super.dieOnCircularReference(stk, p);
         } else {
-            for (ResourceCollection resourceCollection : rc) {
-                if (resourceCollection instanceof DataType) {
-                    pushAndInvokeCircularReferenceCheck((DataType) resourceCollection, stk, p);
-                }
-            }
+            rc.stream().filter((resourceCollection) -> (resourceCollection instanceof DataType)).forEachOrdered((resourceCollection) -> {
+                pushAndInvokeCircularReferenceCheck((DataType) resourceCollection, stk, p);
+            });
             setChecked(true);
         }
     }

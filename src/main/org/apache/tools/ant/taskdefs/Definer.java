@@ -395,11 +395,15 @@ public abstract class Definer extends DefBase {
             }
             Properties props = new Properties();
             props.load(is);
-            for (String key : props.stringPropertyNames()) {
+            props.stringPropertyNames().stream().map((key) -> {
                 name = key;
+                return key;
+            }).map((_item) -> {
                 classname = props.getProperty(name);
+                return _item;
+            }).forEachOrdered((_item) -> {
                 addDefinition(al, name, classname);
-            }
+            });
         } catch (IOException ex) {
             throw new BuildException(ex, getLocation());
         }

@@ -318,9 +318,9 @@ public class TraXLiaison implements XSLTLiaison4, ErrorListener, XSLTLoggerAware
         if (uriResolver != null) {
             transformer.setURIResolver(uriResolver);
         }
-        for (final String[] pair : outputProperties) {
+        outputProperties.forEach((pair) -> {
             transformer.setOutputProperty(pair[0], pair[1]);
-        }
+        });
 
         if (traceConfiguration != null) {
             if ("org.apache.xalan.transformer.TransformerImpl" //NOSONAR
@@ -411,17 +411,16 @@ public class TraXLiaison implements XSLTLiaison4, ErrorListener, XSLTLoggerAware
         tfactory.setErrorListener(this);
 
         // specific attributes for the transformer
-        for (final Object[] pair : attributes) {
+        attributes.forEach((pair) -> {
             tfactory.setAttribute((String) pair[0], pair[1]);
-        }
-
-        for (Map.Entry<String, Boolean> feature : features.entrySet()) {
+        });
+        features.entrySet().forEach((feature) -> {
             try {
                 tfactory.setFeature(feature.getKey(), feature.getValue());
             } catch (TransformerConfigurationException ex) {
                 throw new BuildException(ex);
             }
-        }
+        });
 
         if (uriResolver != null) {
             tfactory.setURIResolver(uriResolver);

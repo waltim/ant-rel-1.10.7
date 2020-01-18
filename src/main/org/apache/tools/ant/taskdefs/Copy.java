@@ -650,7 +650,7 @@ public class Copy extends Task {
         final Map<File, List<String>> dirsByBasedir,
         final Map<File, List<String>> filesByBasedir) {
 
-        for (final File f : baseDirs) {
+        baseDirs.forEach((f) -> {
             final List<String> files = filesByBasedir.get(f);
             final List<String> dirs = dirsByBasedir.get(f);
 
@@ -663,8 +663,8 @@ public class Copy extends Task {
                 srcDirs = dirs.toArray(srcDirs);
             }
             scan(f == NULL_FILE_PLACEHOLDER ? null : f, destDir, srcFiles,
-                 srcDirs);
-        }
+                    srcDirs);
+        });
     }
 
     /**
@@ -876,9 +876,9 @@ public class Copy extends Task {
                             executionFilters
                                 .addFilterSet(getProject().getGlobalFilterSet());
                         }
-                        for (final FilterSet filterSet : filterSets) {
+                        filterSets.forEach((filterSet) -> {
                             executionFilters.addFilterSet(filterSet);
-                        }
+                        });
                         fileUtils.copyFile(new File(fromFile), new File(toFile),
                                            executionFilters,
                                            filterChains, forceOverwrite,
@@ -942,41 +942,40 @@ public class Copy extends Task {
                 + " resource" + (map.size() == 1 ? "" : "s")
                 + " to " + destDir.getAbsolutePath());
 
-            for (final Map.Entry<Resource, String[]> e : map.entrySet()) {
+            map.entrySet().forEach((e) -> {
                 final Resource fromResource = e.getKey();
                 for (final String toFile : e.getValue()) {
                     try {
                         log("Copying " + fromResource + " to " + toFile,
-                            verbosity);
-
+                                verbosity);
                         final FilterSetCollection executionFilters = new FilterSetCollection();
                         if (filtering) {
                             executionFilters
-                                .addFilterSet(getProject().getGlobalFilterSet());
+                                    .addFilterSet(getProject().getGlobalFilterSet());
                         }
-                        for (final FilterSet filterSet : filterSets) {
+                        filterSets.forEach((filterSet) -> {
                             executionFilters.addFilterSet(filterSet);
-                        }
+                        });
                         ResourceUtils.copyResource(fromResource,
-                                                   new FileResource(destDir,
-                                                                    toFile),
-                                                   executionFilters,
-                                                   filterChains,
-                                                   forceOverwrite,
-                                                   preserveLastModified,
-                                                   /* append: */ false,
-                                                   inputEncoding,
-                                                   outputEncoding,
-                                                   getProject(),
-                                                   getForce());
-                    } catch (final IOException ioe) {
+                                new FileResource(destDir,
+                                        toFile),
+                                executionFilters,
+                                filterChains,
+                                forceOverwrite,
+                                preserveLastModified,
+                                /* append: */ false,
+                                inputEncoding,
+                                outputEncoding,
+                                getProject(),
+                                getForce());
+                    }catch (final IOException ioe) {
                         String msg = "Failed to copy " + fromResource
-                            + " to " + toFile
-                            + " due to " + getDueTo(ioe);
+                                + " to " + toFile
+                                + " due to " + getDueTo(ioe);
                         final File targetFile = new File(toFile);
                         if (!(ioe instanceof
-                              ResourceUtils.ReadOnlyTargetFileException)
-                            && targetFile.exists() && !targetFile.delete()) {
+                                ResourceUtils.ReadOnlyTargetFileException)
+                                && targetFile.exists() && !targetFile.delete()) {
                             msg += " and I couldn't delete the corrupt " + toFile;
                         }
                         if (failonerror) {
@@ -985,7 +984,7 @@ public class Copy extends Task {
                         log(msg, Project.MSG_ERR);
                     }
                 }
-            }
+            });
         }
     }
 

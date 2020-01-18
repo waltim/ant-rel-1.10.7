@@ -216,9 +216,9 @@ public class BorlandDeploymentTool extends GenericDeploymentTool
         handler.registerDTD(PUBLICID_BORLAND_EJB,
                             borlandDTD == null ? DEFAULT_BAS_DTD_LOCATION : borlandDTD);
 
-        for (DTDLocation dtdLocation : getConfig().dtdLocations) {
+        getConfig().dtdLocations.forEach((dtdLocation) -> {
             handler.registerDTD(dtdLocation.getPublicId(), dtdLocation.getLocation());
-        }
+        });
         return handler;
     }
 
@@ -442,14 +442,13 @@ public class BorlandDeploymentTool extends GenericDeploymentTool
         //build the home classes list.
         List<String> homes = new ArrayList<>();
 
-        for (String clazz : files.keySet()) {
-            if (clazz.endsWith("Home.class")) {
-                //remove .class extension
-                String home = toClass(clazz);
-                homes.add(home);
-                log(" Home " + home, Project.MSG_VERBOSE);
-            }
-        }
+        files.keySet().stream().filter((clazz) -> (clazz.endsWith("Home.class"))).map((clazz) -> toClass(clazz)).map((home) -> {
+            //remove .class extension
+            homes.add(home);
+            return home;
+        }).forEachOrdered((home) -> {
+            log(" Home " + home, Project.MSG_VERBOSE);
+        });
 
         buildBorlandStubs(homes);
 

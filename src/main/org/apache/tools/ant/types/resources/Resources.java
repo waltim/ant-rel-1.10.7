@@ -245,11 +245,9 @@ public class Resources extends DataType implements ResourceCollection {
         if (isReference()) {
             super.dieOnCircularReference(stk, p);
         } else {
-            for (ResourceCollection resourceCollection : getNested()) {
-                if (resourceCollection instanceof DataType) {
-                    pushAndInvokeCircularReferenceCheck((DataType) resourceCollection, stk, p);
-                }
-            }
+            getNested().stream().filter((resourceCollection) -> (resourceCollection instanceof DataType)).forEachOrdered((resourceCollection) -> {
+                pushAndInvokeCircularReferenceCheck((DataType) resourceCollection, stk, p);
+            });
             setChecked(true);
         }
     }

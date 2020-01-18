@@ -159,27 +159,28 @@ public class Antlib extends Task implements TaskContainer {
     @Override
     public void execute() {
         //TODO handle tasks added via #addTask()
-
-        for (Task task : tasks) {
-            UnknownElement ue = (UnknownElement) task;
+        tasks.stream().map((task) -> (UnknownElement) task).map((ue) -> {
             setLocation(ue.getLocation());
+            return ue;
+        }).map((ue) -> {
             ue.maybeConfigure();
+            return ue;
+        }).forEachOrdered((ue) -> {
             Object configuredObject = ue.getRealThing();
-            if (configuredObject == null) {
-                continue;
+            if (!(configuredObject == null)) {
+                if (!(configuredObject instanceof AntlibDefinition)) {
+                    throw new BuildException(
+                            "Invalid task in antlib %s %s does not extend %s",
+                            ue.getTag(), configuredObject.getClass(),
+                            AntlibDefinition.class.getName());
+                }
+                AntlibDefinition def = (AntlibDefinition) configuredObject;
+                def.setURI(uri);
+                def.setAntlibClassLoader(getClassLoader());
+                def.init();
+                def.execute();
             }
-            if (!(configuredObject instanceof AntlibDefinition)) {
-                throw new BuildException(
-                    "Invalid task in antlib %s %s does not extend %s",
-                    ue.getTag(), configuredObject.getClass(),
-                    AntlibDefinition.class.getName());
-            }
-            AntlibDefinition def = (AntlibDefinition) configuredObject;
-            def.setURI(uri);
-            def.setAntlibClassLoader(getClassLoader());
-            def.init();
-            def.execute();
-        }
+        });
     }
 
 }

@@ -2032,15 +2032,17 @@ public class Javadoc extends Task {
                     toExecute.createArgument().setPath(docletPath);
                 }
             }
-            for (final DocletParam param : Collections.list(doclet.getParams())) {
+            Collections.list(doclet.getParams()).stream().map((param) -> {
                 if (param.getName() == null) {
                     throw new BuildException("Doclet parameters must have a name");
                 }
+                return param;
+            }).map((param) -> {
                 toExecute.createArgument().setValue(param.getName());
-                if (param.getValue() != null) {
-                    toExecute.createArgument().setValue(param.getValue());
-                }
-            }
+                return param;
+            }).filter((param) -> (param.getValue() != null)).forEachOrdered((param) -> {
+                toExecute.createArgument().setValue(param.getValue());
+            });
         }
     }
 
@@ -2198,17 +2200,17 @@ public class Javadoc extends Task {
 
     // add the group arguments
     private void doGroups(final Commandline toExecute) {
-        for (final GroupArgument ga : groups) {
+        groups.forEach((ga) -> {
             final String title = ga.getTitle();
             final String packages = ga.getPackages();
             if (title == null || packages == null) {
                 throw new BuildException(
-                    "The title and packages must be specified for group elements.");
+                        "The title and packages must be specified for group elements.");
             }
             toExecute.createArgument().setValue("-group");
             toExecute.createArgument().setValue(expand(title));
             toExecute.createArgument().setValue(packages);
-        }
+        });
     }
 
     private void doNoqualifier(final Commandline toExecute) {
@@ -2233,7 +2235,7 @@ public class Javadoc extends Task {
     }
 
     private void doTags(final Commandline toExecute) {
-        for (final Object element : tags) {
+        tags.forEach((element) -> {
             if (element instanceof TagArgument) {
                 final TagArgument ta = (TagArgument) element;
                 final File tagDir = ta.getDir(getProject());
@@ -2272,7 +2274,7 @@ public class Javadoc extends Task {
                     }
                 }
             }
-        }
+        });
     }
 
     private void doDocFilesSubDirs(final Commandline toExecute) {
@@ -2466,7 +2468,7 @@ public class Javadoc extends Task {
             }
         }
 
-        for (DirSet ds : dirSets) {
+        dirSets.forEach((ds) -> {
             final File baseDir = ds.getDir(getProject());
             log("scanning " + baseDir + " for packages.", Project.MSG_DEBUG);
             final DirectoryScanner dsc = ds.getDirectoryScanner(getProject());
@@ -2475,14 +2477,14 @@ public class Javadoc extends Task {
                 // are there any java files in this directory?
                 final File pd = new File(baseDir, dir);
                 final String[] files = pd.list((directory,
-                    name) -> name.endsWith(".java") || (includeNoSourcePackages
-                        && name.equals("package.html")));
-
+                        name) -> name.endsWith(".java") || (includeNoSourcePackages
+                                && name.equals("package.html")));
+                
                 if (files.length > 0) {
                     if (dir.isEmpty()) {
                         log(baseDir
-                            + " contains source files in the default package, you must specify them as source files not packages.",
-                            Project.MSG_WARN);
+                                + " contains source files in the default package, you must specify them as source files not packages.",
+                                Project.MSG_WARN);
                     } else {
                         containsPackages = true;
                         final String packageName =
@@ -2500,9 +2502,9 @@ public class Javadoc extends Task {
                 sp.createPathElement().setLocation(baseDir);
             } else {
                 log(baseDir + " doesn\'t contain any packages, dropping it.",
-                    Project.MSG_VERBOSE);
+                        Project.MSG_VERBOSE);
             }
-        }
+        });
     }
 
     private void postProcessGeneratedJavadocs() throws IOException {

@@ -131,12 +131,12 @@ public class ExtensionSet
         if (isReference()) {
             super.dieOnCircularReference(stk, p);
         } else {
-            for (ExtensionAdapter extensionAdapter : extensions) {
+            extensions.forEach((extensionAdapter) -> {
                 pushAndInvokeCircularReferenceCheck(extensionAdapter, stk, p);
-            }
-            for (FileSet fileSet : extensionsFilesets) {
+            });
+            extensionsFilesets.forEach((fileSet) -> {
                 pushAndInvokeCircularReferenceCheck(fileSet, stk, p);
-            }
+            });
             setChecked(true);
         }
     }

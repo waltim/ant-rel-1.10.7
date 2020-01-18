@@ -597,23 +597,23 @@ public class RedirectorElement extends DataType {
         if (isReference()) {
             super.dieOnCircularReference(stk, p);
         } else {
-            for (Mapper m : Arrays.asList(inputMapper, outputMapper, errorMapper)) {
-                if (m != null) {
-                    stk.push(m);
-                    m.dieOnCircularReference(stk, p);
-                    stk.pop();
-                }
-            }
+            Arrays.asList(inputMapper, outputMapper, errorMapper).stream().filter((m) -> (m != null)).map((m) -> {
+                stk.push(m);
+                return m;
+            }).map((m) -> {
+                m.dieOnCircularReference(stk, p);
+                return m;
+            }).forEachOrdered((_item) -> {
+                stk.pop();
+            });
             final List<? extends List<FilterChain>> filterChainLists = Arrays
                     .<List<FilterChain>> asList(inputFilterChains, outputFilterChains,
                             errorFilterChains);
-            for (List<FilterChain> filterChains : filterChainLists) {
-                if (filterChains != null) {
-                    for (FilterChain fc : filterChains) {
-                        pushAndInvokeCircularReferenceCheck(fc, stk, p);
-                    }
-                }
-            }
+            filterChainLists.stream().filter((filterChains) -> (filterChains != null)).forEachOrdered((filterChains) -> {
+                filterChains.forEach((fc) -> {
+                    pushAndInvokeCircularReferenceCheck(fc, stk, p);
+                });
+            });
             setChecked(true);
         }
     }

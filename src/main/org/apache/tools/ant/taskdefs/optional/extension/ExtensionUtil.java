@@ -83,7 +83,7 @@ public final class ExtensionUtil {
         throws BuildException {
         final List<Extension> extensions = new ArrayList<>();
 
-        for (FileSet fileSet : libraries) {
+        libraries.forEach((fileSet) -> {
             boolean includeImpl = true;
             boolean includeURL = true;
 
@@ -99,7 +99,7 @@ public final class ExtensionUtil {
                 final File file = new File(basedir, fileName);
                 loadExtensions(file, extensions, includeImpl, includeURL);
             }
-        }
+        });
         return extensions.toArray(new Extension[extensions.size()]);
     }
 

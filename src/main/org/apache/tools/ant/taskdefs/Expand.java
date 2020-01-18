@@ -275,13 +275,12 @@ public class Expand extends Task {
 
             Set<String> includePatterns = new HashSet<>();
             Set<String> excludePatterns = new HashSet<>();
-            for (PatternSet p : patternsets) {
+            patternsets.stream().map((p) -> {
                 String[] incls = p.getIncludePatterns(getProject());
                 if (incls == null || incls.length == 0) {
                     // no include pattern implicitly means includes="**"
                     incls = new String[]{"**"};
                 }
-
                 for (String incl : incls) {
                     String pattern = incl.replace('/', File.separatorChar)
                             .replace('\\', File.separatorChar);
@@ -290,19 +289,18 @@ public class Expand extends Task {
                     }
                     includePatterns.add(pattern);
                 }
-
                 String[] excls = p.getExcludePatterns(getProject());
-                if (excls != null) {
-                    for (String excl : excls) {
-                        String pattern = excl.replace('/', File.separatorChar)
-                                .replace('\\', File.separatorChar);
-                        if (pattern.endsWith(File.separator)) {
-                            pattern += "**";
-                        }
-                        excludePatterns.add(pattern);
+                return excls;
+            }).filter((excls) -> (excls != null)).forEachOrdered((excls) -> {
+                for (String excl : excls) {
+                    String pattern = excl.replace('/', File.separatorChar)
+                            .replace('\\', File.separatorChar);
+                    if (pattern.endsWith(File.separator)) {
+                        pattern += "**";
                     }
+                    excludePatterns.add(pattern);
                 }
-            }
+            });
 
             boolean included = false;
             for (String pattern : includePatterns) {

@@ -593,10 +593,12 @@ public class EjbJar extends MatchingTask {
             deploymentTools.add(genericTool);
         }
 
-        for (EJBDeploymentTool tool : deploymentTools) {
+        deploymentTools.stream().map((tool) -> {
             tool.configure(config);
+            return tool;
+        }).forEachOrdered((tool) -> {
             tool.validateConfigured();
-        }
+        });
 
         try {
             // Create the parser using whatever parser the system dictates
@@ -615,9 +617,9 @@ public class EjbJar extends MatchingTask {
             // descriptor, and hence one bean in our model.
             for (String file : files) {
                 // process the deployment descriptor in each tool
-                for (EJBDeploymentTool tool : deploymentTools) {
+                deploymentTools.forEach((tool) -> {
                     tool.processDescriptor(file, saxParser);
-                }
+                });
             }
         } catch (SAXException se) {
             throw new BuildException("SAXException while creating parser.", se);

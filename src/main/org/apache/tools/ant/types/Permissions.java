@@ -109,12 +109,10 @@ public class Permissions {
      */
     private void init() throws BuildException {
         granted = new java.security.Permissions();
-        for (final Permissions.Permission p : revokedPermissions) {
-            if (p.getClassName() == null) {
-                throw new BuildException("Revoked permission " + p + " does not contain a class.");
-            }
-        }
-        for (final Permissions.Permission p : grantedPermissions) {
+        revokedPermissions.stream().filter((p) -> (p.getClassName() == null)).forEachOrdered((p) -> {
+            throw new BuildException("Revoked permission " + p + " does not contain a class.");
+        });
+        grantedPermissions.forEach((p) -> {
             if (p.getClassName() == null) {
                 throw new BuildException("Granted permission " + p
                         + " does not contain a class.");
@@ -122,7 +120,7 @@ public class Permissions {
                 final java.security.Permission perm = createPermission(p);
                 granted.add(perm);
             }
-        }
+        });
         // Add base set of permissions
         granted.add(new SocketPermission("localhost:1024-", "listen"));
         granted.add(new PropertyPermission("java.version", "read"));
@@ -233,11 +231,9 @@ public class Permissions {
          * @param perm the permission being checked
          */
         private void checkRevoked(final java.security.Permission perm) {
-            for (final Permissions.Permission revoked : revokedPermissions) {
-                if (revoked.matches(perm)) {
-                    throw new SecurityException("Permission " + perm + " was revoked.");
-                }
-            }
+            revokedPermissions.stream().filter((revoked) -> (revoked.matches(perm))).forEachOrdered((_item) -> {
+                throw new SecurityException("Permission " + perm + " was revoked.");
+            });
         }
     }
 

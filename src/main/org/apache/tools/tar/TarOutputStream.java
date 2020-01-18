@@ -494,12 +494,12 @@ public class TarOutputStream extends FilterOutputStream {
         transferModTime(entry, pex);
 
         StringWriter w = new StringWriter();
-        for (Map.Entry<String, String> h : headers.entrySet()) {
+        headers.entrySet().stream().map((h) -> {
             String key = h.getKey();
             String value = h.getValue();
             int len = key.length() + value.length()
-                + 3 /* blank, equals and newline */
-                + 2 /* guess 9 < actual length < 100 */;
+                    + 3 /* blank, equals and newline */
+                    + 2 /* guess 9 < actual length < 100 */;
             String line = len + " " + key + "=" + value + "\n";
             int actualLength = line.getBytes(StandardCharsets.UTF_8).length;
             while (len != actualLength) {
@@ -512,8 +512,10 @@ public class TarOutputStream extends FilterOutputStream {
                 line = len + " " + key + "=" + value + "\n";
                 actualLength = line.getBytes(StandardCharsets.UTF_8).length;
             }
+            return line;
+        }).forEachOrdered((line) -> {
             w.write(line);
-        }
+        });
         byte[] data = w.toString().getBytes(StandardCharsets.UTF_8);
         pex.setSize(data.length);
         putNextEntry(pex);

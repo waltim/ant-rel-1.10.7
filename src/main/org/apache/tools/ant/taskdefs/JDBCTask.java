@@ -348,18 +348,18 @@ public abstract class JDBCTask extends Task {
             info.put("user", getUserId());
             info.put("password", getPassword());
 
-            for (Property p : connectionProperties) {
+            connectionProperties.forEach((p) -> {
                 String name = p.getName();
                 String value = p.getValue();
                 if (name == null || value == null) {
                     log("Only name/value pairs are supported as connection properties.",
-                        Project.MSG_WARN);
+                            Project.MSG_WARN);
                 } else {
                     log("Setting connection property " + name + " to " + value,
-                        Project.MSG_VERBOSE);
+                            Project.MSG_VERBOSE);
                     info.put(name, value);
                 }
-            }
+            });
 
             Connection conn = getDriver().connect(getUrl(), info);
 

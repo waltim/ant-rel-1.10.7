@@ -653,7 +653,7 @@ public class ProjectHelper {
      */
     public void resolveExtensionOfAttributes(Project project)
             throws BuildException {
-        for (String[] extensionInfo : getExtensionStack()) {
+        getExtensionStack().forEach((extensionInfo) -> {
             String extPointName = extensionInfo[0];
             String targetName = extensionInfo[1];
             OnMissingExtensionPoint missingBehaviour = OnMissingExtensionPoint.valueOf(extensionInfo[2]);
@@ -701,6 +701,6 @@ public class ProjectHelper {
                 }
                 extPoint.addDependency(targetName);
             }
-        }
+        });
     }
 }

@@ -115,11 +115,9 @@ public class ConstantPool {
      * into the actual data for that entry.
      */
     public void resolve() {
-        for (ConstantPoolEntry poolInfo : entries) {
-            if (poolInfo != null && !poolInfo.isResolved()) {
-                poolInfo.resolve(this);
-            }
-        }
+        entries.stream().filter((poolInfo) -> (poolInfo != null && !poolInfo.isResolved())).forEachOrdered((poolInfo) -> {
+            poolInfo.resolve(this);
+        });
     }
 
 

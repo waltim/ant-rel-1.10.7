@@ -745,9 +745,9 @@ public abstract class AbstractCvsTask extends Task {
         if (cvsPackage != null) {
             c.createArgument().setLine(cvsPackage);
         }
-        for (Module m : modules) {
+        modules.forEach((m) -> {
             c.createArgument().setValue(m.getName());
-        }
+        });
         if (this.compression > 0
             && this.compression <= MAXIMUM_COMRESSION_LEVEL) {
             c.createArgument(true).setValue("-z" + this.compression);

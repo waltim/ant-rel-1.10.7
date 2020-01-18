@@ -108,11 +108,9 @@ s.
             super.dieOnCircularReference(stk, p);
         } else {
             if (resourceComparators != null && !resourceComparators.isEmpty()) {
-                for (ResourceComparator resourceComparator : resourceComparators) {
-                    if (resourceComparator instanceof DataType) {
-                        pushAndInvokeCircularReferenceCheck(resourceComparator, stk, p);
-                    }
-                }
+                resourceComparators.stream().filter((resourceComparator) -> (resourceComparator instanceof DataType)).forEachOrdered((resourceComparator) -> {
+                    pushAndInvokeCircularReferenceCheck(resourceComparator, stk, p);
+                });
             }
             setChecked(true);
         }

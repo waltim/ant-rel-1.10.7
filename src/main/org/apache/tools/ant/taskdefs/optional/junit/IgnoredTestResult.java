@@ -64,9 +64,9 @@ public class IgnoredTestResult extends TestResult {
      */
     public synchronized void testIgnored(Test test) throws Exception {
         ignored.add(new TestIgnored(test));
-        for (IgnoredTestListener listener : listeners) {
+        listeners.forEach((listener) -> {
             listener.testIgnored(test);
-        }
+        });
     }
 
     /**
@@ -85,9 +85,9 @@ public class IgnoredTestResult extends TestResult {
      */
     public void testAssumptionFailure(Test test, Throwable cause) {
         skipped.add(new TestIgnored(test));
-        for (IgnoredTestListener listener : listeners) {
+        listeners.forEach((listener) -> {
             listener.testAssumptionFailure(test, cause);
-        }
+        });
     }
 
     /**

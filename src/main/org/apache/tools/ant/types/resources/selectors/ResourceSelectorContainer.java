@@ -127,11 +127,9 @@ public class ResourceSelectorContainer extends DataType {
         if (isReference()) {
             super.dieOnCircularReference(stk, p);
         } else {
-            for (ResourceSelector resourceSelector : resourceSelectors) {
-                if (resourceSelector instanceof DataType) {
-                    pushAndInvokeCircularReferenceCheck((DataType) resourceSelector, stk, p);
-                }
-            }
+            resourceSelectors.stream().filter((resourceSelector) -> (resourceSelector instanceof DataType)).forEachOrdered((resourceSelector) -> {
+                pushAndInvokeCircularReferenceCheck((DataType) resourceSelector, stk, p);
+            });
             setChecked(true);
         }
     }

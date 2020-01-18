@@ -57,9 +57,9 @@ public class HelloWorld extends Task {
         if (message != null) log(message);
 
         // handle nested elements
-        for (Message msg : messages) {
+        messages.forEach((msg) -> {
             log(msg.getMsg());
-        }
+        });
     }
 
 

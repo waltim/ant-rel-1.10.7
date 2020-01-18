@@ -941,12 +941,12 @@ public class Project implements ResourceFactory {
      */
     public void setSystemProperties() {
         final Properties systemP = System.getProperties();
-        for (final String propertyName : systemP.stringPropertyNames()) {
+        systemP.stringPropertyNames().forEach((propertyName) -> {
             final String value = systemP.getProperty(propertyName);
             if (value != null) {
                 this.setPropertyInternal(propertyName, value);
             }
-        }
+        });
     }
 
     /**
@@ -1832,15 +1832,15 @@ public class Project implements ResourceFactory {
                 + " is " + ret, MSG_VERBOSE);
 
         final Vector<Target> complete = (returnAll) ? ret : new Vector<>(ret);
-        for (final String curTarget : targetTable.keySet()) {
+        targetTable.keySet().forEach((curTarget) -> {
             final String st = state.get(curTarget);
             if (st == null) {
                 tsort(curTarget, targetTable, state, visiting, complete);
             } else if (st == VISITING) {
                 throw new BuildException("Unexpected node in visiting state: "
-                    + curTarget);
+                        + curTarget);
             }
-        }
+        });
         log("Complete build sequence is " + complete, MSG_VERBOSE);
         return ret;
     }
@@ -1910,7 +1910,7 @@ public class Project implements ResourceFactory {
             }
             throw new BuildException(new String(sb));
         }
-        for (final String cur : Collections.list(target.getDependencies())) {
+        Collections.list(target.getDependencies()).forEach((cur) -> {
             final String m = state.get(cur);
             if (m == null) {
                 // Not been visited
@@ -1919,7 +1919,7 @@ public class Project implements ResourceFactory {
                 // Currently visiting this node, so have a cycle
                 throw makeCircularException(cur, visiting);
             }
-        }
+        });
         final String p = visiting.pop();
         if (root != p) {
             throw new BuildException("Unexpected internal error: expected to "

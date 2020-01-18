@@ -121,7 +121,7 @@ public class LauncherSupport {
             Thread.currentThread().setContextClassLoader(this.launchDefinition.getClassLoader());
             final Launcher launcher = LauncherFactory.create();
             final List<TestRequest> requests = buildTestRequests();
-            for (final TestRequest testRequest : requests) {
+            requests.forEach((testRequest) -> {
                 try {
                     final TestDefinition test = testRequest.getOwner();
                     final LauncherDiscoveryRequest request = testRequest.getDiscoveryRequest().build();
@@ -161,7 +161,7 @@ public class LauncherSupport {
                         log("Failed to cleanly close test request", e, Project.MSG_DEBUG);
                     }
                 }
-            }
+            });
         } finally {
             Thread.currentThread().setContextClassLoader(previousClassLoader);
         }
@@ -183,18 +183,17 @@ public class LauncherSupport {
             return Collections.emptyList();
         }
         final List<TestRequest> requests = new ArrayList<>();
-        for (final TestDefinition test : tests) {
+        tests.stream().map((test) -> {
             final List<TestRequest> testRequests;
             if (test instanceof SingleTestClass || test instanceof TestClasses) {
                 testRequests = createTestRequests(test);
             } else {
                 throw new BuildException("Unexpected test definition type " + test.getClass().getName());
             }
-            if (testRequests == null || testRequests.isEmpty()) {
-                continue;
-            }
+            return testRequests;
+        }).filter((testRequests) -> !(testRequests == null || testRequests.isEmpty())).forEachOrdered((testRequests) -> {
             requests.addAll(testRequests);
-        }
+        });
         return requests;
     }
 
@@ -435,15 +434,16 @@ public class LauncherSupport {
                 return Collections.emptyList();
             }
             final List<TestRequest> requests = new ArrayList<>();
-            for (final String testClass : testClasses) {
+            testClasses.stream().map((testClass) -> {
                 final LauncherDiscoveryRequestBuilder requestBuilder = LauncherDiscoveryRequestBuilder.request();
                 final TestRequest request = new TestRequest(test, requestBuilder);
                 request.setName(testClass);
                 requestBuilder.selectors(DiscoverySelectors.selectClass(testClass));
                 addFilters(request);
-
+                return request;
+            }).forEachOrdered((request) -> {
                 requests.add(request);
-            }
+            });
             return requests;
         }
         return Collections.emptyList();
@@ -555,9 +555,9 @@ public class LauncherSupport {
                 final List<byte[]> remaining = new ArrayList<>();
                 this.availableData.drainTo(remaining);
                 if (!remaining.isEmpty()) {
-                    for (final byte[] data : remaining) {
+                    remaining.forEach((data) -> {
                         deliver(data);
-                    }
+                    });
                 }
             } finally {
                 this.completionLatch.countDown();

@@ -80,9 +80,9 @@ public class Description extends DataType {
             return null;
         }
         StringBuilder description = new StringBuilder();
-        for (Target t : targets) {
+        targets.forEach((t) -> {
             concatDescriptions(project, t, description);
-        }
+        });
         return description.toString();
     }
 
@@ -91,15 +91,9 @@ public class Description extends DataType {
         if (t == null) {
             return;
         }
-        for (Task task : findElementInTarget(t, "description")) {
-            if (task instanceof UnknownElement) {
-                UnknownElement ue = (UnknownElement) task;
-                String descComp = ue.getWrapper().getText().toString();
-                if (descComp != null) {
-                    description.append(project.replaceProperties(descComp));
-                }
-            }
-        }
+        findElementInTarget(t, "description").stream().filter((task) -> (task instanceof UnknownElement)).map((task) -> (UnknownElement) task).map((ue) -> ue.getWrapper().getText().toString()).filter((descComp) -> (descComp != null)).forEachOrdered((descComp) -> {
+            description.append(project.replaceProperties(descComp));
+        });
     }
 
     private static List<Task> findElementInTarget(Target t, String name) {

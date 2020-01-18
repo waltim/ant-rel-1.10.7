@@ -260,13 +260,13 @@ public class Symlink extends DispatchTask {
                 Properties linksToStore = new Properties();
 
                 // fill up a Properties object with link and resource names:
-                for (File lnk : linksInDir) {
+                linksInDir.forEach((lnk) -> {
                     try {
                         linksToStore.put(lnk.getName(), lnk.getCanonicalPath());
                     } catch (IOException ioe) {
                         handleError("Couldn't get canonical name of parent link");
                     }
-                }
+                });
                 writePropertyFile(linksToStore, dir);
             });
         } finally {
@@ -495,7 +495,7 @@ public class Symlink extends DispatchTask {
      */
     private Set<File> findLinks(List<FileSet> fileSets) {
         final Set<File> result = new HashSet<>();
-        for (FileSet fs : fileSets) {
+        fileSets.forEach((fs) -> {
             DirectoryScanner ds = fs.getDirectoryScanner(getProject());
 
             File dir = fs.getDir(getProject());
@@ -515,8 +515,8 @@ public class Symlink extends DispatchTask {
                         } catch (IOException e) {
                             handleError("IOException: " + path + " omitted");
                         }
-            });
-        }
+                    });
+        });
         return result;
     }
 

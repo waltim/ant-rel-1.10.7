@@ -96,12 +96,12 @@ public class SingleTestClass extends TestDefinition implements NamedTest {
         writer.writeAttribute(LD_XML_ATTR_CLASS_NAME, testClass);
         if (testMethods != null) {
             final StringBuilder sb = new StringBuilder();
-            for (final String method : testMethods) {
+            testMethods.forEach((method) -> {
                 if (sb.length() != 0) {
                     sb.append(",");
                 }
                 sb.append(method);
-            }
+            });
             writer.writeAttribute(LD_XML_ATTR_METHODS, sb.toString());
         }
         if (haltOnFailure != null) {

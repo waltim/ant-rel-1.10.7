@@ -90,9 +90,9 @@ class PlainMailer extends Mailer {
                 mailMessage.setHeader("Content-Type", message.getMimeType());
             }
             if (headers != null) {
-                for (Header h : headers) {
+                headers.forEach((h) -> {
                     mailMessage.setHeader(h.getName(), h.getValue());
-                }
+                });
             }
             PrintStream out = mailMessage.getPrintStream();
             message.print(out);

@@ -135,13 +135,15 @@ public class ScpTest {
         scpTask.execute();
 
         FilesMatch match = new FilesMatch();
-        for (File f : uploadList) {
+        uploadList.stream().map((f) -> {
             match.setFile1(f);
+            return f;
+        }).forEachOrdered((f) -> {
             File f2 = new File(multi, f.getName());
             match.setFile2(f2);
             assertTrue("Assert file '" + f.getPath() + "' and file '"
                     + f2.getPath() + "'", match.eval());
-        }
+        });
     }
 
     @Test

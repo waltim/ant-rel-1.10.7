@@ -425,14 +425,14 @@ public abstract class Task extends ProjectComponent {
      */
     private void replaceChildren(RuntimeConfigurable wrapper,
                                  UnknownElement parentElement) {
-        for (RuntimeConfigurable childWrapper : Collections.list(wrapper.getChildren())) {
+        Collections.list(wrapper.getChildren()).forEach((childWrapper) -> {
             UnknownElement childElement = new UnknownElement(childWrapper.getElementTag());
             parentElement.addChild(childElement);
             childElement.setProject(getProject());
             childElement.setRuntimeConfigurableWrapper(childWrapper);
             childWrapper.setProxy(childElement);
             replaceChildren(childWrapper, childElement);
-        }
+        });
     }
 
     /**

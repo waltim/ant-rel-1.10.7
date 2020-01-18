@@ -222,10 +222,12 @@ public class ChangeLogTask extends AbstractCvsTask {
 
             loadUserlist(userList);
 
-            for (CvsUser user : cvsUsers) {
+            cvsUsers.stream().map((user) -> {
                 user.validate();
+                return user;
+            }).forEachOrdered((user) -> {
                 userList.put(user.getUserID(), user.getDisplayname());
-            }
+            });
 
             if (!remote) {
                 setCommand("log");
@@ -272,13 +274,11 @@ public class ChangeLogTask extends AbstractCvsTask {
             }
 
             // Check if list of files to check has been specified
-            for (FileSet fileSet : filesets) {
-                final DirectoryScanner scanner =
-                    fileSet.getDirectoryScanner(getProject());
+            filesets.stream().map((fileSet) -> fileSet.getDirectoryScanner(getProject())).forEachOrdered((scanner) -> {
                 for (String file : scanner.getIncludedFiles()) {
                     addCommandArgument(file);
                 }
-            }
+            });
 
             final ChangeLogParser parser = new ChangeLogParser(remote,
                                                                getPackage(),

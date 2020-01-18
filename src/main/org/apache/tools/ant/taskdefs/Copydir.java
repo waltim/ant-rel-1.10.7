@@ -126,18 +126,18 @@ public class Copydir extends MatchingTask {
                 log("Copying " + filecopyList.size() + " file"
                     + (filecopyList.size() == 1 ? "" : "s")
                     + " to " + destDir.getAbsolutePath());
-                for (Map.Entry<String, String> e : filecopyList.entrySet()) {
+                filecopyList.entrySet().forEach((e) -> {
                     String fromFile = e.getKey();
                     String toFile = e.getValue();
                     try {
                         getProject().copyFile(fromFile, toFile, filtering,
-                                         forceOverwrite);
+                                forceOverwrite);
                     } catch (IOException ioe) {
                         String msg = "Failed to copy " + fromFile + " to "
-                            + toFile + " due to " + ioe.getMessage();
+                                + toFile + " due to " + ioe.getMessage();
                         throw new BuildException(msg, ioe, getLocation());
                     }
-                }
+                });
             }
         } finally {
             filecopyList.clear();

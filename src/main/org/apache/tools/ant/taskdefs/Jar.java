@@ -975,31 +975,32 @@ public class Jar extends Zip {
         // hashtable by the classloader, but we'll do so anyway.
         Collections.sort(dirs);
         Collections.sort(files);
-        for (String dir : dirs) {
+        dirs.stream().map((dir) -> dir.replace('\\', '/')).map((dir) -> {
             // try to be smart, not to be fooled by a weird directory name
-            dir = dir.replace('\\', '/');
             if (dir.startsWith("./")) {
                 dir = dir.substring(2);
             }
+            return dir;
+        }).map((dir) -> {
             while (dir.startsWith("/")) {
                 dir = dir.substring(1);
             }
+            return dir;
+        }).map((dir) -> {
             int pos = dir.lastIndexOf('/');
             if (pos != -1) {
                 dir = dir.substring(0, pos);
             }
-
             // looks like nothing from META-INF should be added
             // and the check is not case insensitive.
             // see sun.misc.JarIndex
             // see also
             // https://bugs.openjdk.java.net/browse/JDK-4408526
-            if (!indexMetaInf && dir.startsWith("META-INF")) {
-                continue;
-            }
+            return dir;
+        }).filter((dir) -> !(!indexMetaInf && dir.startsWith("META-INF"))).forEachOrdered((dir) -> {
             // name newline
             writer.println(dir);
-        }
+        });
 
         files.forEach(writer::println);
     }

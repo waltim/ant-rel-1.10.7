@@ -83,14 +83,12 @@ public class JarLibDisplayTask extends Task {
         if (libraryFileSets.isEmpty()) {
             displayer.displayLibrary(libraryFile);
         } else {
-            for (FileSet fileSet : libraryFileSets) {
-                final DirectoryScanner scanner =
-                    fileSet.getDirectoryScanner(getProject());
+            libraryFileSets.stream().map((fileSet) -> fileSet.getDirectoryScanner(getProject())).forEachOrdered((scanner) -> {
                 final File basedir = scanner.getBasedir();
                 for (String filename : scanner.getIncludedFiles()) {
                     displayer.displayLibrary(new File(basedir, filename));
                 }
-            }
+            });
         }
     }
 

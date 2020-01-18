@@ -253,13 +253,15 @@ public class IntrospectionHelperTest {
     @Test
     public void testGetNestedElements() {
         Map<String, Class<?>> elemMap = getExpectedNestedElements();
-        for (String name : Collections.list(ih.getNestedElements())) {
+        Collections.list(ih.getNestedElements()).stream().map((name) -> {
             Class<?> expect = elemMap.get(name);
             assertNotNull("Support for " + name + " in IntrospectionHelperTest?",
-                          expect);
+                    expect);
             assertEquals("Return type of " + name, expect, ih.getElementType(name));
+            return name;
+        }).forEachOrdered((name) -> {
             elemMap.remove(name);
-        }
+        });
         assertTrue("Found all", elemMap.isEmpty());
     }
 
@@ -591,13 +593,15 @@ public class IntrospectionHelperTest {
     @Test
     public void testGetAttributes() {
         Map<String, Class<?>> attrMap = getExpectedAttributes();
-        for (String name : Collections.list(ih.getAttributes())) {
+        Collections.list(ih.getAttributes()).stream().map((name) -> {
             Class<?> expect = attrMap.get(name);
             assertNotNull("Support for " + name + " in IntrospectionHelperTest?",
-                          expect);
+                    expect);
             assertEquals("Type of " + name, expect, ih.getAttributeType(name));
+            return name;
+        }).forEachOrdered((name) -> {
             attrMap.remove(name);
-        }
+        });
         attrMap.remove("name");
         assertTrue("Found all", attrMap.isEmpty());
     }

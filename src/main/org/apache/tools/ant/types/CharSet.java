@@ -33,10 +33,12 @@ public class CharSet extends EnumeratedAttribute {
     private static final List<String> VALUES = new ArrayList<>();
 
     static {
-        for (Map.Entry<String, Charset> entry :  Charset.availableCharsets().entrySet()) {
+        Charset.availableCharsets().entrySet().stream().map((entry) -> {
             VALUES.add(entry.getKey());
+            return entry;
+        }).forEachOrdered((entry) -> {
             VALUES.addAll(entry.getValue().aliases());
-        }
+        });
     }
 
     /**

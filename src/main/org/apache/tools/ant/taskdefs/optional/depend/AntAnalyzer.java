@@ -59,8 +59,10 @@ public class AntAnalyzer extends AbstractAnalyzer {
         int maxCount = isClosureRequired() ? MAX_LOOPS : 1;
         while (!toAnalyze.isEmpty() && count++ < maxCount) {
             analyzedDeps.clear();
-            for (String classname : toAnalyze) {
+            toAnalyze.stream().map((classname) -> {
                 dependencies.add(classname);
+                return classname;
+            }).forEachOrdered((classname) -> {
                 File container = null;
                 try {
                     container = getClassContainer(classname);
@@ -73,7 +75,7 @@ public class AntAnalyzer extends AbstractAnalyzer {
                     try (InputStream inStream = container.getName().endsWith(".class")
                             ? Files.newInputStream(Paths.get(container.getPath()))
                             : ZipResource.getZipEntryStream(new ZipFile(container.getPath(), "UTF-8"),
-                            classname.replace('.', '/') + ".class")) {
+                                    classname.replace('.', '/') + ".class")) {
                         ClassFile classFile = new ClassFile();
                         classFile.read(inStream);
                         analyzedDeps.addAll(classFile.getClassRefs());
@@ -81,7 +83,7 @@ public class AntAnalyzer extends AbstractAnalyzer {
                         // ignore
                     }
                 }
-            }
+            });
 
             toAnalyze.clear();
             // now recover all the dependencies collected and add to the list.

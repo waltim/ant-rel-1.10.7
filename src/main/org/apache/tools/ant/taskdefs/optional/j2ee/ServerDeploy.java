@@ -102,10 +102,12 @@ public class ServerDeploy extends Task {
      */
     @Override
     public void execute() throws BuildException {
-        for (HotDeploymentTool tool : vendorTools) {
+        vendorTools.stream().map((tool) -> {
             tool.validateAttributes();
+            return tool;
+        }).forEachOrdered((tool) -> {
             tool.deploy();
-        }
+        });
     }
 
     ///////////////////////////////////////////////////////////////////////////

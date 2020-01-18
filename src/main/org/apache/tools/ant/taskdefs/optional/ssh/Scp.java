@@ -337,7 +337,7 @@ public class Scp extends SSHBase {
         Session session = null;
         try {
             final List<Directory> list = new ArrayList<>(rcs.size());
-            for (ResourceCollection rc : rcs) {
+            rcs.forEach((rc) -> {
                 if (rc instanceof FileSet && rc.isFilesystemOnly()) {
                     FileSet fs = (FileSet) rc;
                     final Directory d = createDirectory(fs);
@@ -350,7 +350,7 @@ public class Scp extends SSHBase {
                         list.addAll(ds);
                     }
                 }
-            }
+            });
             if (!list.isEmpty()) {
                 session = openSession();
                 ScpToMessage message;

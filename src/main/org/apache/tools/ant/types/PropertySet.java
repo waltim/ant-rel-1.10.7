@@ -311,7 +311,7 @@ public class PropertySet extends DataType implements ResourceCollection {
         final Map<String, Object> result = new HashMap<>();
 
         //iterate through the names, get the matching values
-        for (String name : propertyNames) {
+        propertyNames.forEach((name) -> {
             Object value = effectiveProperties.get(name);
             // TODO should we include null properties?
             // TODO should we query the PropertyHelper for property value to grab potentially shadowed values?
@@ -327,7 +327,7 @@ public class PropertySet extends DataType implements ResourceCollection {
                 }
                 result.put(name, value);
             }
-        }
+        });
         return result;
 
     }
@@ -336,9 +336,9 @@ public class PropertySet extends DataType implements ResourceCollection {
         final Project prj = getProject();
         final Map<String, Object> result = prj == null ? getAllSystemProperties() : prj.getProperties();
         //quick & dirty, to make nested mapped p-sets work:
-        for (PropertySet set : setRefs) {
+        setRefs.forEach((set) -> {
             result.putAll(set.getPropertyMap());
-        }
+        });
         return result;
     }
 
@@ -384,20 +384,16 @@ public class PropertySet extends DataType implements ResourceCollection {
                     names.add(r.name);
                 }
             } else if (r.prefix != null) {
-                for (String name : props.keySet()) {
-                    if (name.startsWith(r.prefix)) {
-                        names.add(name);
-                    }
-                }
+                props.keySet().stream().filter((name) -> (name.startsWith(r.prefix))).forEachOrdered((name) -> {
+                    names.add(name);
+                });
             } else if (r.regex != null) {
                 RegexpMatcherFactory matchMaker = new RegexpMatcherFactory();
                 RegexpMatcher matcher = matchMaker.newRegexpMatcher();
                 matcher.setPattern(r.regex);
-                for (String name : props.keySet()) {
-                    if (matcher.matches(name)) {
-                        names.add(name);
-                    }
-                }
+                props.keySet().stream().filter((name) -> (matcher.matches(name))).forEachOrdered((name) -> {
+                    names.add(name);
+                });
             } else if (r.builtin != null) {
                 switch (r.builtin) {
                     case BuiltinPropertySetName.ALL:
@@ -552,9 +548,9 @@ public class PropertySet extends DataType implements ResourceCollection {
             if (mapper != null) {
                 pushAndInvokeCircularReferenceCheck(mapper, stk, p);
             }
-            for (PropertySet propertySet : setRefs) {
+            setRefs.forEach((propertySet) -> {
                 pushAndInvokeCircularReferenceCheck(propertySet, stk, p);
-            }
+            });
             setChecked(true);
         }
     }

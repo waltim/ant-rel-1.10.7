@@ -142,14 +142,14 @@ public class CCMCheck extends Continuus {
             return;
         }
 
-        for (FileSet fs : filesets) {
+        filesets.forEach((fs) -> {
             final File basedir = fs.getDir(getProject());
             DirectoryScanner ds = fs.getDirectoryScanner(getProject());
             for (String srcFile : ds.getIncludedFiles()) {
                 setFile(new File(basedir, srcFile));
                 doit();
             }
-        }
+        });
     }
 
     /**

@@ -137,9 +137,9 @@ public class Target implements TaskContainer {
      *             depends on. Must not be <code>null</code>.
      */
     public void setDepends(String depS) {
-        for (String dep : parseDepends(depS, getName(), "depends")) {
+        parseDepends(depS, getName(), "depends").forEach((dep) -> {
             addDependency(dep);
-        }
+        });
     }
 
     public static List<String> parseDepends(String depends,
@@ -227,11 +227,9 @@ public class Target implements TaskContainer {
      */
     public Task[] getTasks() {
         List<Task> tasks = new ArrayList<>(children.size());
-        for (Object o : children) {
-            if (o instanceof Task) {
-                tasks.add((Task) o);
-            }
-        }
+        children.stream().filter((o) -> (o instanceof Task)).forEachOrdered((o) -> {
+            tasks.add((Task) o);
+        });
         return tasks.toArray(new Task[tasks.size()]);
     }
 

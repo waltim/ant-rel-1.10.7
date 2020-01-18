@@ -91,17 +91,16 @@ public class ChangeLogWriter {
                                    outputTime.format(entry.getDate()));
         DOMUtils.appendCDATAElement(ent, "author", entry.getAuthor());
 
-        for (RCSFile file : entry.getFiles()) {
+        entry.getFiles().forEach((file) -> {
             Element f = DOMUtils.createChildElement(ent, "file");
             DOMUtils.appendCDATAElement(f, "name", file.getName());
             DOMUtils.appendTextElement(f, "revision", file.getRevision());
-
             final String previousRevision = file.getPreviousRevision();
             if (previousRevision != null) {
                 DOMUtils.appendTextElement(f, "prevrevision",
-                                           previousRevision);
+                        previousRevision);
             }
-        }
+        });
         DOMUtils.appendCDATAElement(ent, "msg", entry.getComment());
         DOM_WRITER.write(ent, output, 1, "\t");
     }

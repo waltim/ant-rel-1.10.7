@@ -101,9 +101,7 @@ public final class VectorSet<E> extends Vector<E> {
     @Override
     public synchronized boolean addAll(Collection<? extends E> c) {
         boolean changed = false;
-        for (E e : c) {
-            changed |= add(e);
-        }
+        changed = c.stream().map((e) -> add(e)).reduce(changed, (accumulator, _item) -> accumulator | _item);
         return changed;
     }
 
@@ -114,11 +112,9 @@ public final class VectorSet<E> extends Vector<E> {
     @Override
     public synchronized boolean addAll(int index, Collection<? extends E> c) {
         LinkedList<E> toAdd = new LinkedList<>();
-        for (E e : c) {
-            if (set.add(e)) {
-                toAdd.add(e);
-            }
-        }
+        c.stream().filter((e) -> (set.add(e))).forEachOrdered((e) -> {
+            toAdd.add(e);
+        });
         if (toAdd.isEmpty()) {
             return false;
         }
@@ -194,9 +190,7 @@ public final class VectorSet<E> extends Vector<E> {
     @Override
     public synchronized boolean removeAll(Collection<?> c) {
         boolean changed = false;
-        for (Object o : c) {
-            changed |= remove(o);
-        }
+        changed = c.stream().map((o) -> remove(o)).reduce(changed, (accumulator, _item) -> accumulator | _item);
         return changed;
     }
 

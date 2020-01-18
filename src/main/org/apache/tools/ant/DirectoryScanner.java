@@ -941,13 +941,13 @@ public class DirectoryScanner
                 newroots.put(includePattern.rtrimWildcardTokens(), pattern);
             }
         }
-        for (final Map.Entry<String, TokenizedPath> entry : includeNonPatterns
-            .entrySet()) {
-            final String pattern = entry.getKey();
+        includeNonPatterns
+                .entrySet().forEach((entry) -> {
+                    final String pattern = entry.getKey();
             if (!shouldSkipPattern(pattern)) {
                 newroots.put(entry.getValue(), pattern);
             }
-        }
+        });
 
         if (newroots.containsKey(TokenizedPath.EMPTY_PATH)
             && basedir != null) {

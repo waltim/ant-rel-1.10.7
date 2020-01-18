@@ -557,10 +557,9 @@ public class JonasDeploymentTool extends GenericDeploymentTool {
         genicTask.createArg().setValue("-d");
         genicTask.createArg().setFile(outputdir);
 
-        for (String key : ejbFiles.keySet()) {
-            File f = new File(outputdir + File.separator + key);
+        ejbFiles.keySet().stream().map((key) -> new File(outputdir + File.separator + key)).forEachOrdered((f) -> {
             f.getParentFile().mkdirs();
-        }
+        });
         log("Worked around a bug of GenIC 2.5.", Project.MSG_VERBOSE);
 
         // classpath

@@ -446,12 +446,14 @@ public class EchoProperties extends Task {
         List<Tuple> sorted = sortProperties(props);
 
         // output properties
-        for (Tuple tuple : sorted) {
+        sorted.stream().map((tuple) -> {
             Element propElement = doc.createElement(PROPERTY);
             propElement.setAttribute(ATTR_NAME, tuple.key);
             propElement.setAttribute(ATTR_VALUE, tuple.value);
+            return propElement;
+        }).forEachOrdered((propElement) -> {
             rootElement.appendChild(propElement);
-        }
+        });
 
         try (Writer wri = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
             wri.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");

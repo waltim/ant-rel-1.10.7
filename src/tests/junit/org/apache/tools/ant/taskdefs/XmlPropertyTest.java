@@ -210,10 +210,10 @@ public class XmlPropertyTest {
                                           Properties properties) {
         Hashtable<String, Object> xmlproperties = p.getProperties();
         // Every key identified by the Properties must have been loaded.
-        for (String currentKey : properties.stringPropertyNames()) {
+        properties.stringPropertyNames().forEach((currentKey) -> {
             String assertMsg = msg + "-" + inputFile.getName()
-                + " Key=" + currentKey;
-
+                    + " Key=" + currentKey;
+            
             String propertyValue = properties.getProperty(currentKey);
 
             String xmlValue = (String) xmlproperties.get(currentKey);
@@ -250,8 +250,7 @@ public class XmlPropertyTest {
 
                 assertEquals(assertMsg, propertyValue, xmlValue);
             }
-
-        }
+        });
     }
 
     /**

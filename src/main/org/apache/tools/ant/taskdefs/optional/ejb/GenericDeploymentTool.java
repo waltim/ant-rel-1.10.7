@@ -363,9 +363,9 @@ public class GenericDeploymentTool implements EJBDeploymentTool {
         registerKnownDTDs(h);
 
         // register any DTDs supplied by the user
-        for (DTDLocation dtdLocation : getConfig().dtdLocations) {
+        getConfig().dtdLocations.forEach((dtdLocation) -> {
             h.registerDTD(dtdLocation.getPublicId(), dtdLocation.getLocation());
-        }
+        });
         return h;
     }
 
@@ -521,13 +521,13 @@ public class GenericDeploymentTool implements EJBDeploymentTool {
     protected void addSupportClasses(Hashtable<String, File> ejbFiles) {
         // add in support classes if any
         Project project = task.getProject();
-        for (FileSet supportFileSet : config.supportFileSets) {
+        config.supportFileSets.forEach((supportFileSet) -> {
             File supportBaseDir = supportFileSet.getDir(project);
             DirectoryScanner supportScanner = supportFileSet.getDirectoryScanner(project);
             for (String supportFile : supportScanner.getIncludedFiles()) {
                 ejbFiles.put(supportFile, new File(supportBaseDir, supportFile));
             }
-        }
+        });
     }
 
     /**
@@ -767,41 +767,39 @@ public class GenericDeploymentTool implements EJBDeploymentTool {
                 jarStream.setMethod(JarOutputStream.DEFLATED);
 
                 // Loop through all the class files found and add them to the jar
-                for (Map.Entry<String, File> entryFiles : files.entrySet()) {
+                files.entrySet().forEach((entryFiles) -> {
                     String entryName = entryFiles.getKey();
-                    if (entryName.equals(MANIFEST)) {
-                        continue;
-                    }
-                    File entryFile = entryFiles.getValue();
-                    log("adding file '" + entryName + "'", Project.MSG_VERBOSE);
-                    addFileToJar(jarStream, entryFile, entryName);
-
-                    // See if there are any inner classes for this class and add them in if there are
-                    InnerClassFilenameFilter flt =
-                        new InnerClassFilenameFilter(entryFile.getName());
-                    File entryDir = entryFile.getParentFile();
-                    String[] innerfiles = entryDir.list(flt);
-                    if (innerfiles != null) {
-                        for (String innerfile : innerfiles) {
-                            //get and clean up innerclass name
-                            int entryIndex =
-                                entryName.lastIndexOf(entryFile.getName()) - 1;
-                            if (entryIndex < 0) {
-                                entryName = innerfile;
-                            } else {
-                                entryName = entryName.substring(0, entryIndex)
-                                    + File.separatorChar + innerfile;
+                    if (!(entryName.equals(MANIFEST))) {
+                        File entryFile = entryFiles.getValue();
+                        log("adding file '" + entryName + "'", Project.MSG_VERBOSE);
+                        addFileToJar(jarStream, entryFile, entryName);
+                        // See if there are any inner classes for this class and add them in if there are
+                        InnerClassFilenameFilter flt =
+                                new InnerClassFilenameFilter(entryFile.getName());
+                        File entryDir = entryFile.getParentFile();
+                        String[] innerfiles = entryDir.list(flt);
+                        if (innerfiles != null) {
+                            for (String innerfile : innerfiles) {
+                                //get and clean up innerclass name
+                                int entryIndex =
+                                        entryName.lastIndexOf(entryFile.getName()) - 1;
+                                if (entryIndex < 0) {
+                                    entryName = innerfile;
+                                } else {
+                                    entryName = entryName.substring(0, entryIndex)
+                                            + File.separatorChar + innerfile;
+                                }
+                                // link the file
+                                entryFile = new File(config.srcDir, entryName);
+                                
+                                log("adding innerclass file '" + entryName + "'",
+                                        Project.MSG_VERBOSE);
+                                
+                                addFileToJar(jarStream, entryFile, entryName);
                             }
-                            // link the file
-                            entryFile = new File(config.srcDir, entryName);
-
-                            log("adding innerclass file '" + entryName + "'",
-                                Project.MSG_VERBOSE);
-
-                            addFileToJar(jarStream, entryFile, entryName);
                         }
                     }
-                }
+                });
             }
         } catch (IOException ioe) {
             String msg = "IOException while processing ejb-jar file '"
@@ -827,26 +825,19 @@ public class GenericDeploymentTool implements EJBDeploymentTool {
 
         dependencyAnalyzer.reset();
 
-        for (String entryName : checkEntries.keySet()) {
-            if (entryName.endsWith(".class")) {
-                String className = entryName.substring(0,
-                    entryName.length() - ".class".length());
-                className = className.replace(File.separatorChar, '/');
-                className = className.replace('/', '.');
-
-                dependencyAnalyzer.addRootClass(className);
-            }
-        }
-
-        for (String classname : Collections.list(dependencyAnalyzer.getClassDependencies())) {
+        checkEntries.keySet().stream().filter((entryName) -> (entryName.endsWith(".class"))).map((entryName) -> entryName.substring(0,
+                entryName.length() - ".class".length())).map((className) -> className.replace(File.separatorChar, '/')).map((className) -> className.replace('/', '.')).forEachOrdered((className) -> {
+                    dependencyAnalyzer.addRootClass(className);
+        });
+        Collections.list(dependencyAnalyzer.getClassDependencies()).forEach((classname) -> {
             String location = classname.replace('.', File.separatorChar) + ".class";
             File classFile = new File(config.srcDir, location);
             if (classFile.exists()) {
                 checkEntries.put(location, classFile);
                 log("dependent class: " + classname + " - " + classFile,
-                    Project.MSG_VERBOSE);
+                        Project.MSG_VERBOSE);
             }
-        }
+        });
     }
 
     /**

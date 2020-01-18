@@ -115,13 +115,15 @@ public class UnknownElementTest {
         }
 
         public void execute() {
-            for (Task task : children) {
-                UnknownElement el = (UnknownElement) task;
+            children.stream().map((task) -> (UnknownElement) task).map((el) -> {
                 el.maybeConfigure();
-                Child child = (Child) el.getRealThing();
+                return el;
+            }).map((el) -> (Child) el.getRealThing()).map((child) -> {
                 child.injectParent(this);
+                return child;
+            }).forEachOrdered((child) -> {
                 child.perform();
-            }
+            });
         }
     }
 }

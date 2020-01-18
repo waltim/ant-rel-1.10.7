@@ -1496,9 +1496,9 @@ public class Javac extends MatchingTask {
             final File projectDir,
             final String element) {
         final Map<String, Collection<File>> result = new TreeMap<>();
-        for (CharSequence resolvedElement : expandGroups(element)) {
+        expandGroups(element).forEach((resolvedElement) -> {
             findModules(projectDir, resolvedElement.toString(), result);
-        }
+        });
         return result;
     }
 

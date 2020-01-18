@@ -206,14 +206,14 @@ public class ComponentHelper  {
     private Map<String, List<AntTypeDefinition>> getRestrictedDefinition() {
         final Map<String, List<AntTypeDefinition>> result = new HashMap<>();
         synchronized (restrictedDefinitions) {
-            for (Map.Entry<String, List<AntTypeDefinition>> entry : restrictedDefinitions.entrySet()) {
+            restrictedDefinitions.entrySet().forEach((entry) -> {
                 List<AntTypeDefinition> entryVal = entry.getValue();
                 synchronized (entryVal) {
                     //copy the entryVal
                     entryVal = new ArrayList<>(entryVal);
                 }
                 result.put(entry.getKey(), entryVal);
-            }
+            });
         }
         return result;
     }
@@ -231,9 +231,9 @@ public class ComponentHelper  {
         final Hashtable<String, AntTypeDefinition> typeTable
                 = (Hashtable<String, AntTypeDefinition>) helper.antTypeTable.clone();
         synchronized (antTypeTable) {
-            for (AntTypeDefinition def : typeTable.values()) {
+            typeTable.values().forEach((def) -> {
                 antTypeTable.put(def.getName(), def);
-            }
+            });
         }
         // add the parsed namespaces of the parent project
         Set<String> inheritedCheckedNamespace = helper.getCheckedNamespace();
@@ -748,7 +748,7 @@ public class ComponentHelper  {
     private void initTasks() {
         ClassLoader classLoader = getClassLoader(null);
         Properties props = getDefaultDefinitions(false);
-        for (String name : props.stringPropertyNames()) {
+        props.stringPropertyNames().forEach((name) -> {
             AntTypeDefinition def = new AntTypeDefinition();
             def.setName(name);
             def.setClassName(props.getProperty(name));
@@ -756,7 +756,7 @@ public class ComponentHelper  {
             def.setAdaptToClass(Task.class);
             def.setAdapterClass(TaskAdapter.class);
             antTypeTable.put(name, def);
-        }
+        });
     }
 
     private ClassLoader getClassLoader(ClassLoader classLoader) {
@@ -804,13 +804,13 @@ public class ComponentHelper  {
     private void initTypes() {
         ClassLoader classLoader = getClassLoader(null);
         Properties props = getDefaultDefinitions(true);
-        for (String name : props.stringPropertyNames()) {
+        props.stringPropertyNames().forEach((name) -> {
             AntTypeDefinition def = new AntTypeDefinition();
             def.setName(name);
             def.setClassName(props.getProperty(name));
             def.setClassLoader(classLoader);
             antTypeTable.put(name, def);
-        }
+        });
     }
 
     /**
@@ -1016,10 +1016,9 @@ public class ComponentHelper  {
             } else {
                 out.println();
                 out.println("The definitions in the namespace " + uri + " are:");
-                for (AntTypeDefinition def : matches) {
-                    String local = ProjectHelper.extractNameFromComponentName(def.getName());
+                matches.stream().map((def) -> ProjectHelper.extractNameFromComponentName(def.getName())).forEachOrdered((local) -> {
                     out.println("    " + local);
-                }
+                });
             }
         }
     }

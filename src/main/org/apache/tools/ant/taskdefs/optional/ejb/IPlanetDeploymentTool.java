@@ -260,10 +260,10 @@ public class IPlanetDeploymentTool extends GenericDeploymentTool {
             ejbc.setIasHomeDir(iashome);
         }
         if (getConfig().dtdLocations != null) {
-            for (DTDLocation dtdLocation : getConfig().dtdLocations) {
+            getConfig().dtdLocations.forEach((dtdLocation) -> {
                 ejbc.registerDTD(dtdLocation.getPublicId(),
-                    dtdLocation.getLocation());
-            }
+                        dtdLocation.getLocation());
+            });
         }
 
         /* Execute the ejbc utility -- stubs/skeletons are rebuilt, if needed */

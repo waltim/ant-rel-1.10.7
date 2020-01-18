@@ -138,10 +138,12 @@ public class FailTest {
         thrown.expectMessage("Nested conditions not permitted in conjunction with if/unless attributes");
 
         StringBuilder target = new StringBuilder("testNested4x");
-        for (char ch : Arrays.asList('a', 'b', 'c')) {
+        Arrays.asList('a', 'b', 'c').stream().map((ch) -> {
             target.setCharAt(target.length() - 1, ch);
+            return ch;
+        }).forEachOrdered((_item) -> {
             buildRule.executeTarget(target.toString());
-        }
+        });
     }
 
     @Test
@@ -164,10 +166,12 @@ public class FailTest {
         thrown.expectMessage("A single nested condition is required.");
 
         StringBuilder target = new StringBuilder("testNested7x");
-        for (char ch : Arrays.asList('a', 'b')) {
+        Arrays.asList('a', 'b').stream().map((ch) -> {
             target.setCharAt(target.length() - 1, ch);
+            return ch;
+        }).forEachOrdered((_item) -> {
             buildRule.executeTarget(target.toString());
-        }
+        });
     }
 
 }

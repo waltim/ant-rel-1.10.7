@@ -365,13 +365,12 @@ public abstract class AbstractJarSignerTask extends Task {
         }
 
         //now patch in all system properties
-        for (Environment.Variable variable : sysProperties.getVariablesVector()) {
+        sysProperties.getVariablesVector().forEach((variable) -> {
             declareSysProperty(cmd, variable);
-        }
-
-        for (Commandline.Argument arg : additionalArgs) {
+        });
+        additionalArgs.forEach((arg) -> {
             addArgument(cmd, arg);
-        }
+        });
     }
 
     /**
@@ -469,9 +468,9 @@ public abstract class AbstractJarSignerTask extends Task {
      */
     protected Path createUnifiedSourcePath() {
         Path p = path == null ? new Path(getProject()) : (Path) path.clone();
-        for (FileSet fileSet : createUnifiedSources()) {
+        createUnifiedSources().forEach((fileSet) -> {
             p.add(fileSet);
-        }
+        });
         return p;
     }
 

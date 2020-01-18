@@ -96,9 +96,9 @@ public class TaskConfigurationChecker {
         if (!errors.isEmpty()) {
             StringBuilder sb = new StringBuilder(String.format("Configuration error on <%s>:%n",
                     task.getTaskName()));
-            for (String msg : errors) {
+            errors.forEach((msg) -> {
                 sb.append(String.format("- %s%n", msg));
-            }
+            });
             throw new BuildException(sb.toString(), task.getLocation());
         }
     }

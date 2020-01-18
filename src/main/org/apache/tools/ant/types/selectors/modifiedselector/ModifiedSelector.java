@@ -306,14 +306,14 @@ public class ModifiedSelector extends BaseExtendSelector
         //
         // -----  Set the main attributes, pattern '*'  -----
         //
-        for (Parameter parameter : configParameter) {
+        configParameter.forEach((parameter) -> {
             if (parameter.getName().indexOf('.') > 0) {
                 // this is a *.* parameter for later use
                 specialParameter.add(parameter);
             } else {
                 useParameter(parameter);
             }
-        }
+        });
         configParameter.clear();
 
         // specify the algorithm classname

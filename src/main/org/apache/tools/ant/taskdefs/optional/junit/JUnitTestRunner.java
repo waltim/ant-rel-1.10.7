@@ -365,9 +365,9 @@ public class JUnitTestRunner implements TestListener, JUnitTaskMirror.JUnitTestR
     public void run() {
         res = new IgnoredTestResult();
         res.addListener(wrapListener(this));
-        for (JUnitTaskMirror.JUnitResultFormatterMirror f : formatters) {
+        formatters.forEach((f) -> {
             res.addListener(wrapListener((TestListener) f));
-        }
+        });
 
         final ByteArrayOutputStream errStrm = new ByteArrayOutputStream();
         final ByteArrayOutputStream outStrm = new ByteArrayOutputStream();
@@ -835,23 +835,24 @@ public class JUnitTestRunner implements TestListener, JUnitTaskMirror.JUnitTestR
     }
 
     private void sendOutAndErr(final String out, final String err) {
-        for (JUnitTaskMirror.JUnitResultFormatterMirror f : formatters) {
-            final JUnitResultFormatter formatter = (JUnitResultFormatter) f;
+        formatters.stream().map((f) -> (JUnitResultFormatter) f).map((formatter) -> {
             formatter.setSystemOutput(out);
+            return formatter;
+        }).forEachOrdered((formatter) -> {
             formatter.setSystemError(err);
-        }
+        });
     }
 
     private void fireStartTestSuite() {
-        for (JUnitTaskMirror.JUnitResultFormatterMirror f : formatters) {
+        formatters.forEach((f) -> {
             ((JUnitResultFormatter) f).startTestSuite(junitTest);
-        }
+        });
     }
 
     private void fireEndTestSuite() {
-        for (JUnitTaskMirror.JUnitResultFormatterMirror f : formatters) {
+        formatters.forEach((f) -> {
             ((JUnitResultFormatter) f).endTestSuite(junitTest);
-        }
+        });
     }
 
     /**
@@ -1089,14 +1090,16 @@ public class JUnitTestRunner implements TestListener, JUnitTaskMirror.JUnitTestR
                 registerTestCase(JUnitVersionHelper.getTestCaseName(arg0));
             }
         });
-        for (FormatterElement fe : fromCmdLine) {
+        fromCmdLine.stream().map((fe) -> {
             if (multipleTests && fe.getUseFile()) {
                 final File destFile = new File(test.getTodir(),
                         test.getOutfile() + fe.getExtension());
                 fe.setOutfile(destFile);
             }
+            return fe;
+        }).forEachOrdered((fe) -> {
             runner.addFormatter((JUnitResultFormatter) fe.createFormatter());
-        }
+        });
     }
 
     /**

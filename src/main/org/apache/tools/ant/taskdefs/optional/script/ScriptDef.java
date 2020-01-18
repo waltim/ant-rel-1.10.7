@@ -204,43 +204,54 @@ public class ScriptDef extends DefBase {
         }
 
         attributeSet = new HashSet<>();
-        for (Attribute attribute : attributes) {
+        attributes.stream().map((attribute) -> {
             if (attribute.name == null) {
                 throw new BuildException(
-                    "scriptdef <attribute> elements must specify an attribute name");
+                        "scriptdef <attribute> elements must specify an attribute name");
             }
+            return attribute;
+        }).map((attribute) -> {
             if (attributeSet.contains(attribute.name)) {
                 throw new BuildException(
-                    "scriptdef <%s> declares the %s attribute more than once",
-                    name, attribute.name);
+                        "scriptdef <%s> declares the %s attribute more than once",
+                        name, attribute.name);
             }
+            return attribute;
+        }).forEachOrdered((attribute) -> {
             attributeSet.add(attribute.name);
-        }
+        });
 
         nestedElementMap = new HashMap<>();
-        for (NestedElement nestedElement : nestedElements) {
+        nestedElements.stream().map((nestedElement) -> {
             if (nestedElement.name == null) {
                 throw new BuildException(
-                    "scriptdef <element> elements must specify an element name");
+                        "scriptdef <element> elements must specify an element name");
             }
+            return nestedElement;
+        }).map((nestedElement) -> {
             if (nestedElementMap.containsKey(nestedElement.name)) {
                 throw new BuildException(
-                    "scriptdef <%s> declares the %s nested element more than once",
-                    name, nestedElement.name);
+                        "scriptdef <%s> declares the %s nested element more than once",
+                        name, nestedElement.name);
             }
-
+            return nestedElement;
+        }).map((nestedElement) -> {
             if (nestedElement.className == null
-                && nestedElement.type == null) {
+                    && nestedElement.type == null) {
                 throw new BuildException(
-                    "scriptdef <element> elements must specify either a classname or type attribute");
+                        "scriptdef <element> elements must specify either a classname or type attribute");
             }
+            return nestedElement;
+        }).map((nestedElement) -> {
             if (nestedElement.className != null
-                && nestedElement.type != null) {
+                    && nestedElement.type != null) {
                 throw new BuildException(
-                    "scriptdef <element> elements must specify only one of the classname and type attributes");
+                        "scriptdef <element> elements must specify only one of the classname and type attributes");
             }
+            return nestedElement;
+        }).forEachOrdered((nestedElement) -> {
             nestedElementMap.put(nestedElement.name, nestedElement);
-        }
+        });
 
         // find the script repository - it is stored in the project
         Map<String, ScriptDef> scriptRepository = lookupScriptRepository();

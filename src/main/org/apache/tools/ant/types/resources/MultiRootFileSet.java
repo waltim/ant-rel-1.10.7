@@ -184,9 +184,9 @@ public class MultiRootFileSet extends AbstractFileSet
     }
 
     private void setup(final Union u) {
-        for (final File d : baseDirs) {
+        baseDirs.forEach((d) -> {
             u.add(new Worker(this, type, d));
-        }
+        });
     }
 
     /**

@@ -399,9 +399,9 @@ public class Files extends AbstractSelectorContainer
         Files f = (Files) super.clone();
         f.defaultPatterns = (PatternSet) defaultPatterns.clone();
         f.additionalPatterns = new Vector<>(additionalPatterns.size());
-        for (PatternSet ps : additionalPatterns) {
+        additionalPatterns.forEach((ps) -> {
             f.additionalPatterns.add((PatternSet) ps.clone());
-        }
+        });
         return f;
     }
 

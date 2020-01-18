@@ -353,11 +353,9 @@ public abstract class BaseSelectorContainer extends BaseSelector
         if (isReference()) {
             super.dieOnCircularReference(stk, p);
         } else {
-            for (FileSelector fileSelector : selectorsList) {
-                if (fileSelector instanceof DataType) {
-                    pushAndInvokeCircularReferenceCheck((DataType) fileSelector, stk, p);
-                }
-            }
+            selectorsList.stream().filter((fileSelector) -> (fileSelector instanceof DataType)).forEachOrdered((fileSelector) -> {
+                pushAndInvokeCircularReferenceCheck((DataType) fileSelector, stk, p);
+            });
             setChecked(true);
         }
     }

@@ -112,9 +112,9 @@ public class CommandlineJava implements Cloneable {
                 }
             }
             Properties propertySetProperties = mergePropertySets();
-            for (String key : propertySetProperties.stringPropertyNames()) {
+            propertySetProperties.stringPropertyNames().forEach((key) -> {
                 listIt.add("-D" + key + "=" + propertySetProperties.getProperty(key));
-            }
+            });
         }
 
         /**
@@ -136,17 +136,19 @@ public class CommandlineJava implements Cloneable {
             try {
                 sys = System.getProperties();
                 Properties p = new Properties();
-                for (String name : sys.stringPropertyNames()) {
+                sys.stringPropertyNames().forEach((name) -> {
                     String value = sys.getProperty(name);
                     if (value != null) {
                         p.put(name, value);
                     }
-                }
+                });
                 p.putAll(mergePropertySets());
-                for (Environment.Variable v : variables) {
+                variables.stream().map((v) -> {
                     v.validate();
+                    return v;
+                }).forEachOrdered((v) -> {
                     p.put(v.getKey(), v.getValue());
-                }
+                });
                 System.setProperties(p);
             } catch (SecurityException e) {
                 throw new BuildException("Cannot modify system properties", e);
@@ -213,9 +215,9 @@ public class CommandlineJava implements Cloneable {
          */
         private Properties mergePropertySets() {
             Properties p = new Properties();
-            for (PropertySet ps : propertySets) {
+            propertySets.forEach((ps) -> {
                 p.putAll(ps.getProperties());
-            }
+            });
             return p;
         }
 

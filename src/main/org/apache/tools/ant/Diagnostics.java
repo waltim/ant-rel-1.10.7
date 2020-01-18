@@ -478,7 +478,7 @@ public final class Diagnostics {
             Properties props = new Properties();
             try {
                 props.load(is);
-                for (String key : props.stringPropertyNames()) {
+                props.stringPropertyNames().forEach((key) -> {
                     String classname = props.getProperty(key);
                     try {
                         Class.forName(classname);
@@ -492,7 +492,7 @@ public final class Diagnostics {
                     } catch (LinkageError e) {
                         out.println(key + " : Initialization error");
                     }
-                }
+                });
                 if (props.size() == 0) {
                     out.println("All defined tasks are available");
                 } else {

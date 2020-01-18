@@ -635,20 +635,21 @@ public class Main implements AntMain {
 
     /** Load the property files specified by -propertyfile */
     private void loadPropertyFiles() {
-        for (final String filename : propertyFiles) {
+        propertyFiles.stream().map((filename) -> {
             final Properties props = new Properties();
             try (InputStream fis = Files.newInputStream(Paths.get(filename))) {
                 props.load(fis);
             } catch (final IOException e) {
                 System.out.println("Could not load property file "
-                                   + filename + ": " + e.getMessage());
+                        + filename + ": " + e.getMessage());
             }
-
+            return props;
+        }).forEachOrdered((props) -> {
             // ensure that -D properties take precedence
             props.stringPropertyNames().stream()
                     .filter(name -> definedProps.getProperty(name) == null)
                     .forEach(name -> definedProps.put(name, props.getProperty(name)));
-        }
+        });
     }
 
     /**
@@ -795,12 +796,12 @@ public class Main implements AntMain {
                     proxySetup.enableProxies();
                 }
 
-                for (final ArgumentProcessor processor : processorRegistry.getProcessors()) {
+                processorRegistry.getProcessors().forEach((processor) -> {
                     final List<String> extraArgs = extraArguments.get(processor.getClass());
                     if (extraArgs != null) {
                         processor.prepareConfigure(project, extraArgs);
                     }
-                }
+                });
 
                 ProjectHelper.configureProject(project, buildFile);
 
@@ -1019,9 +1020,9 @@ public class Main implements AntMain {
         System.out.println("  -noclasspath           Run ant without using CLASSPATH");
         System.out.println("  -autoproxy             Java1.5+: use the OS proxy settings");
         System.out.println("  -main <class>          override Ant's normal entry point");
-        for (final ArgumentProcessor processor : ArgumentProcessorRegistry.getInstance().getProcessors()) {
+        ArgumentProcessorRegistry.getInstance().getProcessors().forEach((processor) -> {
             processor.printUsage(System.out);
-        }
+        });
     }
 
     /**

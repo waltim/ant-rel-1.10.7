@@ -2154,20 +2154,18 @@ public class JUnitTask extends Task {
         final Enumeration<JUnitTest> testList, final boolean runIndividual) {
         final Map<ForkedTestConfiguration, List<JUnitTest>> testConfigurations =
             new HashMap<>();
-        for (final JUnitTest test : Collections.list(testList)) {
-            if (test.shouldRun(getProject())) {
-                /* with multi-threaded runs need to defer execution of even */
-                /* individual tests so the threads can pick tests off the queue. */
-                if ((runIndividual || !test.getFork()) && threads == 1) {
-                    execute(test, 0);
-                } else {
-                    testConfigurations
+        Collections.list(testList).stream().filter((test) -> (test.shouldRun(getProject()))).forEachOrdered((test) -> {
+            /* with multi-threaded runs need to defer execution of even */
+            /* individual tests so the threads can pick tests off the queue. */
+            if ((runIndividual || !test.getFork()) && threads == 1) {
+                execute(test, 0);
+            } else {
+                testConfigurations
                         .computeIfAbsent(new ForkedTestConfiguration(test),
-                            k -> new ArrayList<>())
+                                k -> new ArrayList<>())
                         .add(test);
-                }
             }
-        }
+        });
         return testConfigurations.values();
     }
 

@@ -127,19 +127,19 @@ public class ClassfileSet extends FileSet {
         DirectoryScanner parentScanner = super.getDirectoryScanner(p);
         DependScanner scanner = new DependScanner(parentScanner);
         final Vector<String> allRootClasses = new Vector<>(rootClasses);
-        for (FileSet additionalRootSet : rootFileSets) {
+        rootFileSets.forEach((additionalRootSet) -> {
             DirectoryScanner additionalScanner
-                = additionalRootSet.getDirectoryScanner(p);
+                    = additionalRootSet.getDirectoryScanner(p);
             for (String file : additionalScanner.getIncludedFiles()) {
                 if (file.endsWith(".class")) {
                     String classFilePath = StringUtils.removeSuffix(file, ".class");
                     String className
-                        = classFilePath.replace('/', '.').replace('\\', '.');
+                            = classFilePath.replace('/', '.').replace('\\', '.');
                     allRootClasses.addElement(className);
                 }
             }
             scanner.addBasedir(additionalRootSet.getDir(p));
-        }
+        });
         scanner.setBasedir(getDir(p));
         scanner.setRootClasses(allRootClasses);
         scanner.scan();
@@ -175,9 +175,9 @@ public class ClassfileSet extends FileSet {
         super.dieOnCircularReference(stk, p);
 
         if (!isReference()) {
-            for (FileSet additionalRootSet : rootFileSets) {
+            rootFileSets.forEach((additionalRootSet) -> {
                 pushAndInvokeCircularReferenceCheck(additionalRootSet, stk, p);
-            }
+            });
             setChecked(true);
         }
     }

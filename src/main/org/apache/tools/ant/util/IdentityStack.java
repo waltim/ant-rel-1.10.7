@@ -129,9 +129,9 @@ public class IdentityStack<E> extends Stack<E> {
     @Override
     public synchronized boolean containsAll(Collection<?> c) {
         IdentityHashMap<Object, Boolean> map = new IdentityHashMap<>();
-        for (Object e : this) {
+        this.forEach((e) -> {
             map.put(e, Boolean.TRUE);
-        }
+        });
         return map.keySet().containsAll(c);
     }
 }

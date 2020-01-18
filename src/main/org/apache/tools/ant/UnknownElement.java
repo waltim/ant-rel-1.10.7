@@ -674,17 +674,17 @@ public class UnknownElement extends Task {
             ret, getTaskName());
         copyRC.setPolyType(getWrapper().getPolyType());
         Map<String, Object> m = getWrapper().getAttributeMap();
-        for (Map.Entry<String, Object> entry : m.entrySet()) {
+        m.entrySet().forEach((entry) -> {
             copyRC.setAttribute(entry.getKey(), (String) entry.getValue());
-        }
+        });
         copyRC.addText(getWrapper().getText().toString());
 
-        for (RuntimeConfigurable r : Collections.list(getWrapper().getChildren())) {
-            UnknownElement ueChild = (UnknownElement) r.getProxy();
-            UnknownElement copyChild = ueChild.copy(newProject);
+        Collections.list(getWrapper().getChildren()).stream().map((r) -> (UnknownElement) r.getProxy()).map((ueChild) -> ueChild.copy(newProject)).map((copyChild) -> {
             copyRC.addChild(copyChild.getWrapper());
+            return copyChild;
+        }).forEachOrdered((copyChild) -> {
             ret.addChild(copyChild);
-        }
+        });
         return ret;
     }
 }

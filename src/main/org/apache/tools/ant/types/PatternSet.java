@@ -524,7 +524,7 @@ public class PatternSet extends DataType implements Cloneable {
      */
     private void readFiles(Project p) {
         if (!includesFileList.isEmpty()) {
-            for (PatternFileNameEntry ne : includesFileList) {
+            includesFileList.forEach((ne) -> {
                 String fileName = ne.evalName(p);
                 if (fileName != null) {
                     File inclFile = p.resolveFile(fileName);
@@ -534,11 +534,11 @@ public class PatternSet extends DataType implements Cloneable {
                     }
                     readPatterns(inclFile, ne.getEncoding(), includeList, p);
                 }
-            }
+            });
             includesFileList.clear();
         }
         if (!excludesFileList.isEmpty()) {
-            for (PatternFileNameEntry ne : excludesFileList) {
+            excludesFileList.forEach((ne) -> {
                 String fileName = ne.evalName(p);
                 if (fileName != null) {
                     File exclFile = p.resolveFile(fileName);
@@ -548,7 +548,7 @@ public class PatternSet extends DataType implements Cloneable {
                     }
                     readPatterns(exclFile, ne.getEncoding(), excludeList, p);
                 }
-            }
+            });
             excludesFileList.clear();
         }
     }

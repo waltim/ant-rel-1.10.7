@@ -1298,9 +1298,9 @@ public class IPlanetEjbc {
                     + "\n\r              iiop:      " + iiop
                     + "\n\r              hasession: " + hasession);
 
-            for (String cmpDescriptor : cmpDescriptors) {
+            cmpDescriptors.forEach((cmpDescriptor) -> {
                 s.append("\n\r              CMP Descriptor: ").append(cmpDescriptor);
-            }
+            });
 
             return s.toString();
         }

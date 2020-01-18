@@ -49,7 +49,7 @@ public class Difference extends BaseResourceCollectionContainer {
         }
         Set<Resource> hs = new HashSet<>();
         List<Resource> al = new ArrayList<>();
-        for (ResourceCollection rc : rcs) {
+        rcs.forEach((rc) -> {
             for (Resource r : rc) {
                 if (hs.add(r)) {
                     al.add(r);
@@ -57,7 +57,7 @@ public class Difference extends BaseResourceCollectionContainer {
                     al.remove(r);
                 }
             }
-        }
+        });
         return al;
     }
 

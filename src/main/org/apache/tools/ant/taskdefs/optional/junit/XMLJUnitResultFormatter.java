@@ -149,12 +149,14 @@ public class XMLJUnitResultFormatter implements JUnitResultFormatter, XMLConstan
         rootElement.appendChild(propsElement);
         final Properties props = suite.getProperties();
         if (props != null) {
-            for (String name : props.stringPropertyNames()) {
+            props.stringPropertyNames().stream().map((name) -> {
                 final Element propElement = doc.createElement(PROPERTY);
                 propElement.setAttribute(ATTR_NAME, name);
                 propElement.setAttribute(ATTR_VALUE, props.getProperty(name));
+                return propElement;
+            }).forEachOrdered((propElement) -> {
                 propsElement.appendChild(propElement);
-            }
+            });
         }
     }
 

@@ -152,10 +152,12 @@ public class XMLResultAggregator extends Task implements XMLConstants {
             throw new BuildException("Unable to write test aggregate to '" + destFile + "'", e);
         }
         // apply transformation
-        for (AggregateTransformer transformer : transformers) {
+        transformers.stream().map((transformer) -> {
             transformer.setXmlDocument(rootElement.getOwnerDocument());
+            return transformer;
+        }).forEachOrdered((transformer) -> {
             transformer.transform();
-        }
+        });
     }
 
     /**

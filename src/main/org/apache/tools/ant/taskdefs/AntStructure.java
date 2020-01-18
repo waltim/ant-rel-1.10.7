@@ -92,15 +92,14 @@ public class AntStructure extends Task {
 
             printer.printTargetDecl(out);
 
-            for (final String typeName : getProject().getCopyOfDataTypeDefinitions().keySet()) {
+            getProject().getCopyOfDataTypeDefinitions().keySet().forEach((typeName) -> {
                 printer.printElementDecl(out, getProject(), typeName,
                         getProject().getDataTypeDefinitions().get(typeName));
-            }
-
-            for (final String tName : getProject().getCopyOfTaskDefinitions().keySet()) {
+            });
+            getProject().getCopyOfTaskDefinitions().keySet().forEach((tName) -> {
                 printer.printElementDecl(out, getProject(), tName,
                         getProject().getTaskDefinitions().get(tName));
-            }
+            });
 
             printer.printTail(out);
 
@@ -350,13 +349,11 @@ public class AntStructure extends Task {
             sb.append(String.format(">%n"));
             out.println(sb);
 
-            for (String nestedName : v) {
-                if (!"#PCDATA".equals(nestedName)
+            v.stream().filter((nestedName) -> (!"#PCDATA".equals(nestedName)
                     && !TASKS.equals(nestedName)
-                    && !TYPES.equals(nestedName)) {
-                    printElementDecl(out, p, nestedName, ih.getElementType(nestedName));
-                }
-            }
+                    && !TYPES.equals(nestedName))).forEachOrdered((nestedName) -> {
+                        printElementDecl(out, p, nestedName, ih.getElementType(nestedName));
+            });
         }
 
         /**

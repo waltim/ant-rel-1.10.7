@@ -483,11 +483,13 @@ public class RExecTask extends Task {
             login(rexec);
         }
         /**  Process each sub command */
-        for (RExecSubTask task : rexecTasks) {
+        rexecTasks.stream().map((task) -> {
             if (task instanceof RExecRead && defaultTimeout != null) {
                 ((RExecRead) task).setDefaultTimeout(defaultTimeout);
             }
+            return task;
+        }).forEachOrdered((task) -> {
             task.execute(rexec);
-        }
+        });
     }
 }

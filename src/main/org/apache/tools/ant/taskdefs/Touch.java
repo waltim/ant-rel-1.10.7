@@ -299,14 +299,14 @@ public class Touch extends Task {
         // deal with filesets in a special way since the task
         // originally also used the directories and Union won't return
         // them.
-        for (FileSet fs : filesets) {
+        filesets.forEach((fs) -> {
             DirectoryScanner ds = fs.getDirectoryScanner(getProject());
             File fromDir = fs.getDir(getProject());
 
             for (String srcDir : ds.getIncludedDirectories()) {
                 touch(new FileResource(fromDir, srcDir), defaultTimestamp);
             }
-        }
+        });
     }
 
     /**

@@ -197,13 +197,14 @@ public class Pvcs extends Task {
             commandLine.createArgument().setValue(getPvcsproject());
         }
         if (!getPvcsprojects().isEmpty()) {
-            for (PvcsProject pvcsProject : getPvcsprojects()) {
-                String projectName = pvcsProject.getName();
+            getPvcsprojects().stream().map((pvcsProject) -> pvcsProject.getName()).map((projectName) -> {
                 if (projectName == null || projectName.trim().isEmpty()) {
                     throw new BuildException("name is a required attribute of pvcsproject");
                 }
+                return projectName;
+            }).forEachOrdered((projectName) -> {
                 commandLine.createArgument().setValue(projectName);
-            }
+            });
         }
 
         File tmp = null;

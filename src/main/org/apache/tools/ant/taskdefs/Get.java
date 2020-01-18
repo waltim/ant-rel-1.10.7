@@ -751,11 +751,13 @@ public class Get extends Task {
                 connection.setRequestProperty("Accept-Encoding", GZIP_CONTENT_ENCODING);
             }
 
-            for (final Map.Entry<String, String> header : headers.entrySet()) {
+            headers.entrySet().stream().map((header) -> {
                 //we do not log the header value as it may contain sensitive data like passwords
                 log(String.format("Adding header '%s' ", header.getKey()));
+                return header;
+            }).forEachOrdered((header) -> {
                 connection.setRequestProperty(header.getKey(), header.getValue());
-            }
+            });
 
             if (connection instanceof HttpURLConnection) {
                 ((HttpURLConnection) connection).setInstanceFollowRedirects(false);

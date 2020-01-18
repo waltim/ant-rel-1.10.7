@@ -74,13 +74,11 @@ public class MacroDef extends AntlibDefinition  {
                 "the text nested element needed a \"name\" attribute");
         }
         // Check if used by attributes
-        for (Attribute attribute : attributes) {
-            if (text.getName().equals(attribute.getName())) {
-                throw new BuildException(
+        attributes.stream().filter((attribute) -> (text.getName().equals(attribute.getName()))).forEachOrdered((_item) -> {
+            throw new BuildException(
                     "the name \"%s\" is already used as an attribute",
                     text.getName());
-            }
-        }
+        });
         this.text = text;
         this.textName = text.getName();
     }
@@ -263,13 +261,11 @@ public class MacroDef extends AntlibDefinition  {
                 "the name \"%s\" has already been used by the text element",
                 attribute.getName());
         }
-        for (Attribute att : attributes) {
-            if (att.getName().equals(attribute.getName())) {
-                throw new BuildException(
+        attributes.stream().filter((att) -> (att.getName().equals(attribute.getName()))).forEachOrdered((_item) -> {
+            throw new BuildException(
                     "the name \"%s\" has already been used in another attribute element",
                     attribute.getName());
-            }
-        }
+        });
         attributes.add(attribute);
     }
 

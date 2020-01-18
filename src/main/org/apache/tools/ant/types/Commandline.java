@@ -404,14 +404,11 @@ public class Commandline implements Cloneable {
      * @since Ant 1.6
      */
     public void addArgumentsToList(ListIterator<String> list) {
-        for (Argument arg : arguments) {
-            String[] s = arg.getParts();
-            if (s != null) {
-                for (String value : s) {
-                    list.add(value);
-                }
+        arguments.stream().map((arg) -> arg.getParts()).filter((s) -> (s != null)).forEachOrdered((s) -> {
+            for (String value : s) {
+                list.add(value);
             }
-        }
+        });
     }
 
     /**

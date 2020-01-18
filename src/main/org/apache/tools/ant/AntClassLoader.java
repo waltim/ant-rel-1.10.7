@@ -566,12 +566,12 @@ public class AntClassLoader extends ClassLoader implements SubBuildListener, Clo
      */
     public String getClasspath() {
         final StringBuilder sb = new StringBuilder();
-        for (final File component : pathComponents) {
+        pathComponents.forEach((component) -> {
             if (sb.length() > 0) {
                 sb.append(File.pathSeparator);
             }
             sb.append(component.getAbsolutePath());
-        }
+        });
         return sb.toString();
     }
 
@@ -1407,9 +1407,9 @@ public class AntClassLoader extends ClassLoader implements SubBuildListener, Clo
      * files are closed.
      */
     public synchronized void cleanup() {
-        for (final JarFile jarFile : jarFiles.values()) {
+        jarFiles.values().forEach((jarFile) -> {
             FileUtils.close(jarFile);
-        }
+        });
         jarFiles = new Hashtable<>();
         if (project != null) {
             project.removeBuildListener(this);

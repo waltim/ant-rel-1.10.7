@@ -144,11 +144,13 @@ public class ResolvePropertyMap implements GetProperty {
         this.prefix = prefix;
         this.prefixValues = prefixValues;
 
-        for (String key : map.keySet()) {
+        map.keySet().stream().map((key) -> {
             expandingLHS = true;
+            return key;
+        }).forEachOrdered((key) -> {
             Object result = getProperty(key);
             String value = result == null ? "" : result.toString();
             map.put(key, value);
-        }
+        });
     }
 }

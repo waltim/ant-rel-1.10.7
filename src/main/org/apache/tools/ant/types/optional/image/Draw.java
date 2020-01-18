@@ -82,19 +82,19 @@ public class Draw extends TransformOperation {
         BufferedImage bi = image.getAsBufferedImage();
         Graphics2D graphics = bi.createGraphics();
 
-        for (ImageOperation instr : instructions) {
+        instructions.forEach((instr) -> {
             if (instr instanceof DrawOperation) {
                 PlanarImage op = ((DrawOperation) instr).executeDrawOperation();
                 log("\tDrawing to x=" + xloc + " y=" + yloc);
                 graphics.drawImage(op.getAsBufferedImage(), null, xloc, yloc);
             } else if (instr instanceof TransformOperation) {
                 PlanarImage op
-                    = ((TransformOperation) instr).executeTransformOperation(null);
+                        = ((TransformOperation) instr).executeTransformOperation(null);
                 BufferedImage child = op.getAsBufferedImage();
                 log("\tDrawing to x=" + xloc + " y=" + yloc);
                 graphics.drawImage(child, null, xloc, yloc);
             }
-        }
+        });
         return PlanarImage.wrapRenderedImage(bi);
     }
 }

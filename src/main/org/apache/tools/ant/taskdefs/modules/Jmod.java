@@ -1269,11 +1269,13 @@ o    *
         if (!resolveByDefault) {
             args.add("--do-not-resolve-by-default");
         }
-        for (ResolutionWarningSpec moduleWarning : moduleWarnings) {
+        moduleWarnings.stream().map((moduleWarning) -> {
             moduleWarning.validate();
+            return moduleWarning;
+        }).forEachOrdered((moduleWarning) -> {
             args.add("--warn-if-resolved");
             args.add(moduleWarning.getReason().toCommandLineOption());
-        }
+        });
 
         // Destination file
 

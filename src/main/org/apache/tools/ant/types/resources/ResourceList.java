@@ -191,14 +191,12 @@ public class ResourceList extends DataType implements ResourceCollection {
         if (isReference()) {
             super.dieOnCircularReference(stk, p);
         } else {
-            for (ResourceCollection resourceCollection : textDocuments) {
-                if (resourceCollection instanceof DataType) {
-                    pushAndInvokeCircularReferenceCheck((DataType) resourceCollection, stk, p);
-                }
-            }
-            for (FilterChain filterChain : filterChains) {
+            textDocuments.stream().filter((resourceCollection) -> (resourceCollection instanceof DataType)).forEachOrdered((resourceCollection) -> {
+                pushAndInvokeCircularReferenceCheck((DataType) resourceCollection, stk, p);
+            });
+            filterChains.forEach((filterChain) -> {
                 pushAndInvokeCircularReferenceCheck(filterChain, stk, p);
-            }
+            });
             setChecked(true);
         }
     }

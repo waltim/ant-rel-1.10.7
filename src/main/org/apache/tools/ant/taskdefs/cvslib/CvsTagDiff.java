@@ -509,10 +509,10 @@ public class CvsTagDiff extends AbstractCvsTask {
                 addCommandArgument(pack);
             }
         }
-        for (Module m : getModules()) {
+        getModules().forEach((m) -> {
             packageNames.add(m.getName());
             // will be added to command line in super.execute()
-        }
+        });
         packageNamePrefixes = new String[packageNames.size()];
         packageNamePrefixLengths = new int[packageNames.size()];
         for (int i = 0; i < packageNamePrefixes.length; i++) {

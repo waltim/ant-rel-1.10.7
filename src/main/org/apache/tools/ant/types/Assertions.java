@@ -174,11 +174,12 @@ public class Assertions extends DataType implements Cloneable {
         }
 
         //now any inner assertions
-        for (BaseAssertion assertion : clause.assertionList) {
-            String arg = assertion.toCommand();
+        clause.assertionList.stream().map((assertion) -> assertion.toCommand()).map((arg) -> {
             getProject().log("adding assertion " + arg, Project.MSG_DEBUG);
+            return arg;
+        }).forEachOrdered((arg) -> {
             commandList.add(arg);
-        }
+        });
     }
 
     /**
@@ -195,10 +196,9 @@ public class Assertions extends DataType implements Cloneable {
         }
 
         //now any inner assertions
-        for (BaseAssertion assertion : clause.assertionList) {
-            String arg = assertion.toCommand();
+        clause.assertionList.stream().map((assertion) -> assertion.toCommand()).forEachOrdered((arg) -> {
             addVmArgument(command, arg);
-        }
+        });
     }
 
     /**
@@ -219,11 +219,12 @@ public class Assertions extends DataType implements Cloneable {
         }
 
         //now any inner assertions
-        for (BaseAssertion assertion : clause.assertionList) {
-            String arg = assertion.toCommand();
+        clause.assertionList.stream().map((assertion) -> assertion.toCommand()).map((arg) -> {
             getProject().log("adding assertion " + arg, Project.MSG_DEBUG);
+            return arg;
+        }).forEachOrdered((arg) -> {
             commandIterator.add(arg);
-        }
+        });
     }
 
     /**

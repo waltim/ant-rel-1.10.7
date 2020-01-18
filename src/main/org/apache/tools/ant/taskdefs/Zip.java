@@ -733,9 +733,9 @@ public class Zip extends MatchingTask {
                     oldFiles.setSrc(renamedFile);
                     oldFiles.setDefaultexcludes(false);
 
-                    for (String addedFile : addedFiles) {
+                    addedFiles.forEach((addedFile) -> {
                         oldFiles.createExclude().setName(addedFile);
-                    }
+                    });
                     final DirectoryScanner ds =
                         oldFiles.getDirectoryScanner(getProject());
                     ((ZipScanner) ds).setEncoding(encoding);
@@ -882,20 +882,21 @@ public class Zip extends MatchingTask {
     /** Process groupfilesets */
     private void processGroupFilesets() {
         // Add the files found in groupfileset to fileset
-        for (FileSet fs : groupfilesets) {
+        groupfilesets.stream().map((fs) -> {
             logWhenWriting("Processing groupfileset ", Project.MSG_VERBOSE);
-            final FileScanner scanner = fs.getDirectoryScanner(getProject());
+            return fs;
+        }).map((fs) -> fs.getDirectoryScanner(getProject())).forEachOrdered((scanner) -> {
             final File basedir = scanner.getBasedir();
             for (String file : scanner.getIncludedFiles()) {
                 logWhenWriting("Adding file " + file + " to fileset",
-                               Project.MSG_VERBOSE);
+                        Project.MSG_VERBOSE);
                 final ZipFileSet zf = new ZipFileSet();
                 zf.setProject(getProject());
                 zf.setSrc(new File(basedir, file));
                 add(zf);
                 filesetsFromGroupfilesets.add(zf);
             }
-        }
+        });
     }
 
     /**

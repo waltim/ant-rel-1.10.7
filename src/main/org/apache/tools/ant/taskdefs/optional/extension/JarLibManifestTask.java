@@ -203,9 +203,9 @@ public final class JarLibManifestTask extends Task {
      *        attributes to
      */
     private void appendExtraAttributes(final Attributes attributes) {
-        for (ExtraAttribute attribute : extraAttributes) {
+        extraAttributes.forEach((attribute) -> {
             attributes.putValue(attribute.getName(), attribute.getValue());
-        }
+        });
     }
 
     /**

@@ -1830,13 +1830,14 @@ extends Task {
             if (!propertiesToAdd.isEmpty()) {
                 StringBuilder option = new StringBuilder("--release-info=add");
 
-                for (ReleaseInfoEntry entry : propertiesToAdd) {
-                    Properties props = entry.toProperties();
-                    for (String key : props.stringPropertyNames()) {
+                propertiesToAdd.stream().map((entry) -> entry.toProperties()).forEachOrdered((props) -> {
+                    props.stringPropertyNames().stream().map((key) -> {
                         option.append(":").append(key).append("=");
+                        return key;
+                    }).forEachOrdered((key) -> {
                         option.append(props.getProperty(key));
-                    }
-                }
+                    });
+                });
 
                 options.add(option.toString());
             }
@@ -2046,10 +2047,10 @@ extends Task {
                     Collectors.joining(",")));
         }
 
-        for (Launcher launcher : launchers) {
+        launchers.forEach((launcher) -> {
             args.add("--launcher");
             args.add(launcher.toString());
-        }
+        });
 
         if (!ordering.isEmpty()) {
             args.add("--order-resources="
@@ -2112,10 +2113,12 @@ extends Task {
         if (checkDuplicateLegal) {
             args.add("--dedup-legal-notices=error-if-not-same-content");
         }
-        for (ReleaseInfo info : releaseInfo) {
+        releaseInfo.stream().map((info) -> {
             info.validate();
+            return info;
+        }).forEachOrdered((info) -> {
             args.addAll(info.toCommandLineOptions());
-        }
+        });
 
         return args;
     }

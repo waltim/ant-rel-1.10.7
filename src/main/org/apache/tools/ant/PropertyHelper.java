@@ -619,10 +619,8 @@ public class PropertyHelper implements GetProperty {
      *  @return true if the property is set.
      */
     public boolean setProperty(String name, Object value, boolean verbose) {
-        for (PropertySetter setter : getDelegates(PropertySetter.class)) {
-            if (setter.set(name, value, this)) {
-                return true;
-            }
+        if (getDelegates(PropertySetter.class).stream().anyMatch((setter) -> (setter.set(name, value, this)))) {
+            return true;
         }
         synchronized (this) {
             // user (CLI) properties take precedence
@@ -974,12 +972,12 @@ public class PropertyHelper implements GetProperty {
     public void copyInheritedProperties(Project other) {
         //avoid concurrent modification:
         synchronized (inheritedProperties) {
-            for (Map.Entry<String, Object> entry : inheritedProperties.entrySet()) {
+            inheritedProperties.entrySet().forEach((entry) -> {
                 String arg = entry.getKey();
                 if (other.getUserProperty(arg) == null) {
                     other.setInheritedProperty(arg, entry.getValue().toString());
                 }
-            }
+            });
         }
     }
 
@@ -1001,12 +999,12 @@ public class PropertyHelper implements GetProperty {
     public void copyUserProperties(Project other) {
         //avoid concurrent modification:
         synchronized (userProperties) {
-            for (Map.Entry<String, Object> entry : userProperties.entrySet()) {
+            userProperties.entrySet().forEach((entry) -> {
                 String arg = entry.getKey();
                 if (!inheritedProperties.containsKey(arg)) {
                     other.setUserProperty(arg, entry.getValue().toString());
                 }
-            }
+            });
         }
     }
 
@@ -1081,7 +1079,7 @@ public class PropertyHelper implements GetProperty {
      */
     public void add(Delegate delegate) {
         synchronized (delegates) {
-            for (Class<? extends Delegate> key : getDelegateInterfaces(delegate)) {
+            getDelegateInterfaces(delegate).forEach((key) -> {
                 List<Delegate> list = delegates.get(key);
                 if (list == null) {
                     list = new ArrayList<>();
@@ -1092,7 +1090,7 @@ public class PropertyHelper implements GetProperty {
                 }
                 list.add(0, delegate);
                 delegates.put(key, Collections.unmodifiableList(list));
-            }
+            });
         }
     }
 

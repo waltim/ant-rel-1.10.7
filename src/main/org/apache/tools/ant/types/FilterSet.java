@@ -221,9 +221,9 @@ public class FilterSet extends DataType implements Cloneable {
         // silly hack to avoid stack overflow...
         if (!readingFiles) {
             readingFiles = true;
-            for (File filtersFile : filtersFiles) {
+            filtersFiles.forEach((filtersFile) -> {
                 readFiltersFromFile(filtersFile);
-            }
+            });
             filtersFiles.clear();
             readingFiles = false;
         }
@@ -433,9 +433,9 @@ public class FilterSet extends DataType implements Cloneable {
         if (isReference()) {
             throw noChildrenAllowed();
         }
-        for (Filter filter : filterSet.getFilters()) {
+        filterSet.getFilters().forEach((filter) -> {
             addFilter(filter);
-        }
+        });
     }
 
     /**
@@ -449,10 +449,10 @@ public class FilterSet extends DataType implements Cloneable {
         }
         Properties p = propertySet.getProperties();
         Set<Map.Entry<Object, Object>> entries = p.entrySet();
-        for (Map.Entry<Object, Object> entry : entries) {
+        entries.forEach((entry) -> {
             addFilter(new Filter(String.valueOf(entry.getKey()),
-                                 String.valueOf(entry.getValue())));
-        }
+                    String.valueOf(entry.getValue())));
+        });
     }
 
     /**

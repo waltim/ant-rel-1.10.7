@@ -576,11 +576,9 @@ public class RuntimeConfigurable implements Serializable {
     public void applyPreSet(RuntimeConfigurable r) {
         // Attributes
         if (r.attributeMap != null) {
-            for (String name : r.attributeMap.keySet()) {
-                if (attributeMap == null || attributeMap.get(name) == null) {
-                    setAttribute(name, (String) r.attributeMap.get(name));
-                }
-            }
+            r.attributeMap.keySet().stream().filter((name) -> (attributeMap == null || attributeMap.get(name) == null)).forEachOrdered((name) -> {
+                setAttribute(name, (String) r.attributeMap.get(name));
+            });
         }
         // poly type
 

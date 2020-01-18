@@ -354,11 +354,9 @@ public class Image extends MatchingTask {
                     mapper);
             }
             // deal with the filesets
-            for (FileSet fs : filesets) {
-                writeCount += processDir(fs.getDir(),
+            writeCount = filesets.stream().map((fs) -> processDir(fs.getDir(),
                     fs.getDirectoryScanner().getIncludedFiles(),
-                    dest, mapper);
-            }
+                    dest, mapper)).reduce(writeCount, Integer::sum);
 
             if (writeCount > 0) {
                 log("Processed " + writeCount + (writeCount == 1 ? " image." : " images."));

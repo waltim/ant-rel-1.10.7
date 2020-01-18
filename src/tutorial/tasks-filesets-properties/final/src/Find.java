@@ -64,7 +64,7 @@ public class Find extends Task {
     public void execute() {
         validate();
         // find all files
-        for (Path path : paths) {
+        paths.forEach((path) -> {
             for (String includedFile : path.list()) {
                 String filename = includedFile.replace('\\', '/');
                 filename = filename.substring(filename.lastIndexOf("/") + 1);
@@ -72,7 +72,7 @@ public class Find extends Task {
                     foundFiles.add(includedFile);
                 }
             }
-        }
+        });
 
         // create the return value (list/single)
         String rv = null;
@@ -83,12 +83,12 @@ public class Find extends Task {
             } else {
                 // create list
                 StringBuilder list = new StringBuilder();
-                for (String file : foundFiles) {
+                foundFiles.forEach((file) -> {
                     if (list.length() > 0) {
                         list.append(delimiter);
                     }
                     list.append(file);
-                }
+                });
                 rv = list.toString();
             }
         }

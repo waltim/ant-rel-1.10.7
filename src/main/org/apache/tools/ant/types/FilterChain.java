@@ -404,11 +404,9 @@ public class FilterChain extends DataType {
         if (isReference()) {
             super.dieOnCircularReference(stk, p);
         } else {
-            for (Object o : filterReaders) {
-                if (o instanceof DataType) {
-                    pushAndInvokeCircularReferenceCheck((DataType) o, stk, p);
-                }
-            }
+            filterReaders.stream().filter((o) -> (o instanceof DataType)).forEachOrdered((o) -> {
+                pushAndInvokeCircularReferenceCheck((DataType) o, stk, p);
+            });
             setChecked(true);
         }
     }

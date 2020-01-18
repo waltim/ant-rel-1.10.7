@@ -641,12 +641,12 @@ public class JspC extends MatchingTask {
      */
     public void deleteEmptyJavaFiles() {
         if (javaFiles != null) {
-            for (File file : javaFiles) {
-                if (file.exists() && file.length() == 0) {
-                    log("deleting empty output file " + file);
-                    file.delete();
-                }
-            }
+            javaFiles.stream().filter((file) -> (file.exists() && file.length() == 0)).map((file) -> {
+                log("deleting empty output file " + file);
+                return file;
+            }).forEachOrdered((file) -> {
+                file.delete();
+            });
         }
     }
 

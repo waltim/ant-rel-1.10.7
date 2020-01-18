@@ -151,15 +151,13 @@ public class HostInfo extends Task {
     }
 
     private void selectAddresses() {
-        for (InetAddress current : inetAddrs) {
-            if (!current.isMulticastAddress()) {
-                if (current instanceof Inet4Address) {
-                    best4 = selectBestAddress(best4, current);
-                } else if (current instanceof Inet6Address) {
-                    best6 = selectBestAddress(best6, current);
-                }
+        inetAddrs.stream().filter((current) -> (!current.isMulticastAddress())).forEachOrdered((current) -> {
+            if (current instanceof Inet4Address) {
+                best4 = selectBestAddress(best4, current);
+            } else if (current instanceof Inet6Address) {
+                best6 = selectBestAddress(best6, current);
             }
-        }
+        });
 
         nameAddr = selectBestAddress(best4, best6);
     }

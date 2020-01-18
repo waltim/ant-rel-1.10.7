@@ -117,9 +117,9 @@ public final class ReplaceTokens
 
         if (!resolvedTokensBuilt) {
             // build the resolved tokens tree map.
-            for (Map.Entry<String, String> entry : hash.entrySet()) {
+            hash.entrySet().forEach((entry) -> {
                 resolvedTokens.put(beginToken + entry.getKey() + endToken, entry.getValue());
-            }
+            });
             resolvedTokensBuilt = true;
         }
 

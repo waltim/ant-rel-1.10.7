@@ -237,7 +237,7 @@ public class LayoutPreservingProperties extends Properties {
      */
     public void listLines(final PrintStream out) {
         out.println("-- logical lines --");
-        for (LogicalLine line : logicalLines) {
+        logicalLines.forEach((line) -> {
             if (line instanceof Blank) {
                 out.println("blank:   \"" + line + "\"");
             } else if (line instanceof Comment) {
@@ -245,7 +245,7 @@ public class LayoutPreservingProperties extends Properties {
             } else if (line instanceof Pair) {
                 out.println("pair:    \"" + line + "\"");
             }
-        }
+        });
     }
 
     /**
